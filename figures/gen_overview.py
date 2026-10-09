@@ -152,8 +152,8 @@ PY, PH = 176, 128
 WY, WH = 8, PY + PH - 8
 PANELS = {"Read": (8, 266, PY, PH), "Use": (282, 266, PY, PH), "Write": (WX, 912 - WX, WY, WH)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
-         "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
-         "Write": ("#FAF3FB", "#EBD5F0", "#BF8FCC", "⊕", f"add {serif('ασ')}<sub>F</sub>{serif('v')}")}
+         "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "−", f"mean-ablate {serif('v')}"),
+         "Write": ("#FAF3FB", "#EBD5F0", "#BF8FCC", "+", f"add {serif('ασ')}<sub>F</sub>{serif('v')}")}
 for name, (x, w, y, h) in PANELS.items():
     body, head, stroke, op, formula = STYLE[name]
     v("", x, y, w, h, f"rounded=1;arcSize=3;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
