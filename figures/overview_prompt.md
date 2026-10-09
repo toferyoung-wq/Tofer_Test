@@ -120,3 +120,8 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 ## 9. v5 修订
 
 - 删除右上角图例框和 (a)/(b) 分区标签；rate/placement 色点与 TF/Gen 标签的含义改由图注说明。
+
+## 10. v6 修订
+
+- 三个模型：LM 画成三层错位叠放的层叠块，下方一行写明 Llama-3.2-3B · Qwen2.5-1.5B · Qwen2.5-7B (block 21)。
+- Write 栏底部新增 Free generation 条：prompt → 注入 ⊕ 的 LM → 含 uh/um 的生成描述。

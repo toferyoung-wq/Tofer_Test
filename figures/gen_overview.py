@@ -71,7 +71,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 362
+W, H = 920, 406
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -93,18 +93,22 @@ pre = f'<span style="background-color:{COOL_F};border-bottom:2px solid {COOL_S}"
 s3 = text(f"the boy {pre} uh taking a cookie", 8, 84, 176, 18, 12)
 
 sx, sy, sw = 196, 26, 38
-for i in range(8):
-    hl = i == 2
-    v("", sx, sy + i * 11, sw, 8,
-      f"rounded=1;arcSize=30;html=1;strokeWidth=0.8;"
-      f"fillColor={'#FFE0CC' if hl else '#ECEFF1'};strokeColor={'#F08A4B' if hl else '#B0BEC5'};")
-text("LM · block 21", sx - 20, sy + 88, sw + 40, 12, 10, NOTE, "center")
+for k, (ox_, oy_) in enumerate(((10, -8), (5, -4), (0, 0))):
+    front = k == 2
+    for i in range(8):
+        hl = i == 2
+        fill = ('#FFE0CC' if hl else '#ECEFF1') if front else ('#FFF1E8' if hl else '#F5F7F8')
+        stroke = ('#F08A4B' if hl else '#B0BEC5') if front else ('#F6C3A2' if hl else '#D5DCE0')
+        v("", sx + ox_, sy + oy_ + i * 11, sw, 8,
+          f"rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor={fill};strokeColor={stroke};")
+text(f"Llama-3.2-3B · Qwen2.5-1.5B · Qwen2.5-7B <font color='#F08A4B'>(block 21)</font>",
+     8, 116, 300, 14, 10.5, NOTE)
 for s, y in ((s1, 39), (s2, 59), (s3, 93)):
     e(s, None, FLOW, tp=(sx, y))
 m1 = v("−", 256, 40, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
 m2 = v("−", 256, 84, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
-e(None, m1, FLOW, sp=(sx + sw, 49))
-e(None, m2, FLOW, sp=(sx + sw, 93))
+e(None, m1, FLOW, sp=(sx + sw + 12, 49))
+e(None, m2, FLOW, sp=(sx + sw + 12, 93))
 c1 = v("", 304, 34, 30, 27, f"shape=cube;size=6;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.3;")
 c2 = v("", 304, 79, 30, 27, f"shape=cube;size=6;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.3;")
 e(m1, c1, FLOW)
@@ -114,7 +118,7 @@ text(f"<b>FPpred</b> <font style='font-size:10.5px' color='{NOTE}'>pre-FP − pr
 
 # (a) -> (b)
 e(None, None, "shape=flexArrow;endArrow=classic;html=1;fillColor=#ECEFF1;strokeColor=#B0BEC5;width=9;endSize=5;endWidth=10;",
-  sp=(319, 110), tp=(319, 152))
+  sp=(319, 112), tp=(319, 152))
 text(f"apply {serif('v')} at block 21", 332, 120, 150, 16, 11, NOTE)
 
 # ======================= (b) Read / Use / Write =======================
@@ -122,7 +126,7 @@ stream_y = 162
 e(None, None, "endArrow=blockThin;endFill=1;strokeColor=#90A4AE;strokeWidth=2.4;", sp=(8, stream_y), tp=(912, stream_y))
 text(f"residual stream {serif('h')}", 800, stream_y - 18, 112, 14, 10.5, NOTE, "right")
 
-top, bot = 180, 354
+top, bot = 180, 398
 cols = [
     ("Read", 8, 250, "#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
     ("Use", 266, 214, "#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
@@ -157,7 +161,7 @@ def word_strip(x0, y, words, dx, hl=None, size=10.5):
 # ---- Read glyph: projection score per position, pre-FP position stands out
 rx, rw = pos["Read"]
 words = ["the", "boy", "is", "taking", "a", "cookie"]
-base, dx, gx = 262, 34, rx + 26
+base, dx, gx = 290, 34, rx + 26
 scores = [8, 10, 30, 9, 7, 11]
 for i, sc in enumerate(scores):
     bar(gx + i * dx + 9, base, sc, COOL_S if i == 2 else GREY_BAR, w=10)
@@ -165,12 +169,12 @@ hline(gx, gx + 6 * dx, base, "strokeColor=#90A4AE;strokeWidth=1;")
 word_strip(gx, base + 2, words, dx, hl=2)
 text(f"<i>FP follows</i>", gx + 2 * dx + 18, base - 44, 70, 12, 9.5, COOL_S)
 text(f"{serif('h·v')}", rx + 6, base - 34, 22, 14, 11, NOTE)
-items(rx + 12, 284, rw - 16, [f"Position readout (AUC) {P}", f"Beyond covariates {P}", f"Surprisal link {P}"])
+items(rx + 12, 318, rw - 16, [f"Position readout (AUC) {P}", f"Beyond covariates {P}", f"Surprisal link {P}"], dy=26)
 
 # ---- Use glyph: next-token distribution before (outline) / after (filled)
 ux, uw = pos["Use"]
 cands = ["uh", "the", "and", "boy"]
-base, dx, gx = 262, 44, ux + 32
+base, dx, gx = 290, 44, ux + 32
 before = [30, 22, 14, 10]
 after = [14, 22, 14, 10]
 for i, (b0, b1) in enumerate(zip(before, after)):
@@ -181,43 +185,60 @@ hline(gx - 6, gx + 4 * dx - 16, base, "strokeColor=#90A4AE;strokeWidth=1;")
 word_strip(gx + 7 - 8, base + 2, cands, dx, size=10.5)
 text("<i>P(next token)</i>", ux + 6, base - 46, 90, 12, 9.5, NOTE)
 text("<i>does P(uh) drop?</i>", gx + 22, base - 34, 100, 12, 9.5, WARM_S)
-items(ux + 12, 284, uw - 16, [f"Ablate FP {R}", f"Ablate FPpred {R}{P}"])
+items(ux + 12, 318, uw - 16, [f"Ablate FP {R}", f"Ablate FPpred {R}{P}"], dy=26)
 
 # ---- Write: two sub-panels with their own glyphs
 wx, ww = pos["Write"]
 ug = (wx + 10, 168)
 et = (wx + 188, ww - 198)
 for (bx, bw), title in ((ug, "Ungated · every position"), (et, "Externally timed")):
-    v("", bx, 210, bw, 138, "rounded=1;arcSize=5;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
+    v("", bx, 210, bw, 112, "rounded=1;arcSize=5;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
     text(f"<i>{title}</i>", bx + 8, 212, bw - 10, 16, 10.5, "#7B1FA2")
 
 # ungated glyph: ⊕ above every position
-base, dx, gx = 268, 26, ug[0] + 18
+base, dx, gx = 266, 26, ug[0] + 18
 for i in range(6):
     x = gx + i * dx
     bar(x, base, 10, GREY_BAR, w=8)
     text("⊕", x - 4, base - 30, 16, 14, 12, "#7B1FA2", "center", "fontStyle=1;")
 hline(gx - 6, gx + 6 * dx - 10, base, "strokeColor=#90A4AE;strokeWidth=1;")
-items(ug[0] + 8, 286, ug[1] - 10, [f"Add FP {R}{P} {tag('TF · Gen')}", f"Add FPpred {R}{P} {tag('TF')}"], dy=24)
+items(ug[0] + 8, 278, ug[1] - 10, [f"Add FP {R}{P} {tag('TF · Gen')}", f"Add FPpred {R}{P} {tag('TF')}"], dy=22)
 
 # externally timed glyph: position scores, threshold, ⊕ only above it
-base, dx, gx = 272, 22, et[0] + 24
-scores = [8, 12, 26, 10, 7, 30, 9, 11]
+base, dx, gx = 268, 22, et[0] + 24
+scores = [6, 9, 20, 8, 5, 24, 7, 9]
 for i, sc in enumerate(scores):
     x = gx + i * dx
-    over = sc > 20
+    over = sc > 15
     bar(x, base, sc, COOL_S if over else GREY_BAR, w=8)
     if over:
         text("⊕", x - 4, base - sc - 16, 16, 14, 12, "#7B1FA2", "center", "fontStyle=1;")
-thr = base - 19
+thr = base - 15
 hline(gx - 6, gx + 8 * dx - 6, base, "strokeColor=#90A4AE;strokeWidth=1;")
 hline(gx - 6, gx + 8 * dx - 6, thr, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
 text("top <i>k</i>%", gx + 8 * dx - 2, thr - 7, 40, 14, 10, "#7B1FA2")
 gate_x = gx + 5 * dx + 4
-items(et[0] + 8, 286, et[1] - 10, [
+items(et[0] + 8, 278, et[1] - 10, [
     f"Oracle timing {R}{P} {tag('Gen')}",
     f"Gated by FPpred {R}{P} {tag('TF · Gen')}",
-], dy=24)
+], dy=22)
+
+
+# free generation strip: prompt -> steered LM -> description with fillers
+gy, gh = 328, 62
+v("", wx + 10, gy, ww - 20, gh, "rounded=1;arcSize=6;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
+text(f"<i>Free generation</i> {tag('(Gen)')}", wx + 18, gy + 2, 160, 16, 10.5, "#7B1FA2")
+p_chip = v("Interviewer: …<br>Participant:", wx + 18, gy + 22, 128, 32,
+           "rounded=1;arcSize=12;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=9.5;fontColor=#455A64;align=left;spacingLeft=4;whiteSpace=wrap;" + FONT)
+lx, ly = wx + 166, gy + 22
+for i in range(4):
+    v("", lx, ly + i * 8, 26, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
+text("⊕", lx + 22, ly - 8, 16, 14, 12, "#7B1FA2", "center", "fontStyle=1;")
+e(p_chip, None, FLOW, tp=(lx, ly + 15))
+fp = lambda w_: f'<span style="background-color:{FPHL}">{w_}</span>'
+o_chip = v(f"the boy {fp('uh')} is taking a cookie and {fp('um')} the mother is …", lx + 52, gy + 22, ww - 20 - (lx + 52 - wx - 10) - 10, 32,
+           "rounded=1;arcSize=12;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#263238;align=left;spacingLeft=4;whiteSpace=wrap;" + FONT)
+e(None, o_chip, FLOW, sp=(lx + 28, ly + 15))
 
 # external gate: FPpred direction -> scores in the timed panel
 e(c2, None, f"endArrow=blockThin;endFill=1;dashed=1;strokeColor={COOL_S};strokeWidth=1.4;exitX=1;exitY=0.75;",
