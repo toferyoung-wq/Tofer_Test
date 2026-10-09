@@ -166,17 +166,26 @@ def word_strip(x0, y, words, dx, hl=None, size=10.5):
         text(wd, x0 + i * dx - 8, y, dx + 16, 14, size, "#455A64", "center", style)
 
 
-# ---- Read glyph: projection score per position, pre-FP position stands out
+# ---- Read glyph: h·v peaks before the FP; surprisal peaks on the word after it
 rx, rw = pos["Read"]
-words = ["the", "boy", "is", "taking", "a", "cookie"]
-base, dx, gx = 264, 34, rx + 26
-scores = [8, 10, 30, 9, 7, 11]
-for i, sc in enumerate(scores):
-    bar(gx + i * dx + 9, base, sc, COOL_S if i == 2 else GREY_BAR, w=10)
-hline(gx, gx + 6 * dx, base, "strokeColor=#90A4AE;strokeWidth=1;")
-word_strip(gx, base + 2, words, dx, hl=2)
-text(f"<i>FP follows</i>", gx + 2 * dx + 18, base - 44, 70, 12, 9.5, COOL_S)
-text(f"{serif('h·v')}", rx + 6, base - 34, 22, 14, 11, NOTE)
+words = ["the", "boy", "is", "uh", "taking", "a", "cookie"]
+dx, gx = 28, rx + 46
+b1, b2 = 236, 266
+hv = [6, 8, 22, 0, 7, 5, 8]
+sp_ = [6, 7, 6, 0, 20, 6, 8]
+fp_i = 3
+v("", gx + fp_i * dx + 2, b1 - 26, 24, b2 - b1 + 42, f"rounded=0;html=1;strokeColor=none;fillColor={FPHL};opacity=60;")
+for i in range(len(words)):
+    if i == fp_i:
+        continue
+    x = gx + i * dx + 9
+    bar(x, b1, hv[i], COOL_S if i == 2 else GREY_BAR, w=10)
+    bar(x, b2, sp_[i], "#78909C" if i == 4 else GREY_BAR, w=10)
+for y in (b1, b2):
+    hline(gx, gx + len(words) * dx, y, "strokeColor=#90A4AE;strokeWidth=1;")
+word_strip(gx, b2 + 2, words, dx, hl=2)
+text(f"{serif('h·v')}", rx + 6, b1 - 14, 36, 14, 11, COOL_S)
+text("surprisal", rx + 2, b2 - 14, 44, 14, 9.5, "#78909C")
 items(rx + 12, 290, rw - 16, [f"Position readout (AUC) {P}", f"Beyond covariates {P}", f"Surprisal link {P}"], dy=24)
 
 # ---- Use glyph: next-token distribution before (outline) / after (filled)
