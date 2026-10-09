@@ -152,3 +152,9 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
   - Read：h·v_FPpred 与 surprisal 两排位置分布（is / taking 峰值，uh 列高亮）。
   - Use：下一词概率分布，消融前虚框 / 后实心（filler 降低）。
   - Write：every position vs. selected positions（top k%），下方 Gen 条。
+
+## 15. v11
+
+- 左侧放大（例句 14 px、更高的三层网络、更大的方向块）。
+- 去掉条目前的 FP / FPpred / LM 标签；两个方向都汇入一条竖直残差流，Read / Use / Write 通过流上的 · ⊖ ⊕ 挂钩接入。
+- Use 图标题改为问句 "does P(filler) drop?"。
