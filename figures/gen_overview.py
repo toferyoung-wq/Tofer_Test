@@ -1,3 +1,4 @@
+import re
 import sys
 from xml.sax.saxutils import escape
 
@@ -27,7 +28,14 @@ def v(value, x, y, w, h, style, cid=None):
     return cid
 
 
+_COLOR_ATTR = re.compile(r"""(?<!background-)color\s*[:=]\s*['"]?#[0-9A-Fa-f]{6}['"]?;?""")
+
+
 def text(value, x, y, w, h, size=11, color="#263238", align="left", extra=""):
+    # every word is set in black; pure symbols (⊕, ★, …) keep their colour
+    if re.search("[A-Za-z]", re.sub("<[^>]+>", "", value)):
+        color = "#000000"
+        value = _COLOR_ATTR.sub("", value)
     return v(value, x, y, w, h, TXT + f"fontSize={size};fontColor={color};align={align};verticalAlign=middle;" + extra)
 
 
@@ -71,7 +79,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 328
+W, H = 920, 312
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -137,11 +145,11 @@ WX = 562
 e(None, None, f"endArrow=none;strokeColor={WARM_S};strokeWidth=2.4;", sp=(110, FPY), pts=[(30, FPY)], tp=(30, PRY))
 e(None, None, f"endArrow=none;strokeColor={COOL_S};strokeWidth=2.4;", sp=(110, PRY), tp=(30, PRY))
 v("", 25, PRY - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
-e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL), (WX - 18, RL), (WX - 18, 18)], tp=(WX + 16, 18))
+e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL)], tp=(WX, RL))
 
 # ======================= stages =======================
-PY, PH = 192, 128
-WY, WH = 18, PY + PH - 18
+PY, PH = 176, 128
+WY, WH = 8, PY + PH - 8
 PANELS = {"Read": (8, 266, PY, PH), "Use": (282, 266, PY, PH), "Write": (WX, 912 - WX, WY, WH)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
          "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
@@ -149,24 +157,13 @@ STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v'
 for name, (x, w, y, h) in PANELS.items():
     body, head, stroke, op, formula = STYLE[name]
     v("", x, y, w, h, f"rounded=1;arcSize=3;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
-    # the stage name is a pill on the frame border; the incoming connector ends on it
-    sym = {"Read": "⊙", "Use": "⊖", "Write": "⊕"}[name]
-    pw, ph = len(name) * 9 + 46, 26
-    pill = (f"rounded=1;arcSize=50;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.4;"
-            f"fontSize=13.5;fontColor={DARK};" + FONT)
-    label = f"<span style='font-size:16px'>{sym}</span>&nbsp;<b>{name}</b>"
-    sub = f"<i><font color='{NOTE}'>{formula}</font></i>"
+    v("", x, y, w, 24, f"rounded=1;arcSize=12;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;")
+    v(op, x + 6, y + 3, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.6;fontSize=12;fontStyle=1;" + FONT)
+    text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", x + 30, y + 2, w - 34, 20, 14, DARK)
     if name != "Write":
         cx_ = x + w / 2
-        v("", cx_ - 4, RL - 4, 8, 8, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
-        e(None, None, f"endArrow=blockThin;endFill=1;endSize=5;strokeColor={LINE};strokeWidth=1.8;",
-          sp=(cx_, RL), tp=(cx_, y - ph / 2))
-        v(label, cx_ - pw / 2, y - ph / 2, pw, ph, pill)
-        text(sub, cx_ - 90, y + ph / 2 + 2, 180, 16, 11, DARK, "center")
-    else:
-        px = x + 16
-        v(label, px, y - ph / 2, pw, ph, pill)
-        text(sub, px + pw + 10, y + 2, 140, 16, 11, DARK, "left")
+        v("", cx_ - 5, RL - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
+        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2;", sp=(cx_, RL), tp=(cx_, y))
 
 # ---- Read: h·v peaks just before the FP
 x, w, y, h = PANELS["Read"]
@@ -257,15 +254,15 @@ text("top <i>k</i>%", XR - 46, B2 + 4, 46, 14, 10, PURPLE, "right")
 sub_title("free generation", B3)
 ry = B3 + (H3 - 24) / 2 + 6
 pc = v("prompt", IX + 10, ry, 60, 24,
-       "rounded=1;arcSize=20;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#455A64;whiteSpace=wrap;" + FONT)
+       "rounded=1;arcSize=20;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#000000;whiteSpace=wrap;" + FONT)
 gl = IX + 88
 for i in range(3):
     v("", gl, ry + 1 + i * 8, 24, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
 text("⊕", gl + 4, ry - 15, 16, 14, 12, PURPLE, "center", "fontStyle=1;")
 e(pc, None, FLOW, tp=(gl, ry + 12))
-oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> taking …",
+oc = v("the boy <span style='background-color:#ECEFF1;color:#000000'>&nbsp;[FP]&nbsp;</span> is <span style='background-color:#ECEFF1;color:#000000'>&nbsp;[FP]&nbsp;</span> taking …",
        gl + 40, ry, XR - (gl + 40), 24,
-       "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=11;fontColor=#263238;whiteSpace=wrap;" + FONT)
+       "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=11;fontColor=#000000;whiteSpace=wrap;" + FONT)
 e(None, oc, FLOW, sp=(gl + 26, ry + 12))
 
 xml = ('<mxfile host="drawio"><diagram id="overview" name="Overview">'
