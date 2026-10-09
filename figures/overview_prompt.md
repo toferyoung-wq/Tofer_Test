@@ -158,3 +158,10 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - 左侧放大（例句 14 px、更高的三层网络、更大的方向块）。
 - 去掉条目前的 FP / FPpred / LM 标签；两个方向都汇入一条竖直残差流，Read / Use / Write 通过流上的 · ⊖ ⊕ 挂钩接入。
 - Use 图标题改为问句 "does P(filler) drop?"。
+
+## 16. v12
+
+- 回到上下结构：方向构建在上，Read / Use / Write 三个面板在下并排。
+- FP 与 FPpred 两条线在汇合点合并，单支箭头落到残差流上，旁注 "both directions: v ∈ {FP, FPpred}, applied to the residual stream at block 21"。
+- 残差流改为无方向的横条，避免落点位置暗示某个阶段先用或不用。
+- 每个面板：上方分布示意图，下方分析条目；Write 内含 every / selected positions 两个小图与 Gen 条。
