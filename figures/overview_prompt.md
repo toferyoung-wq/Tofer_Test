@@ -134,3 +134,12 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 ## 12. v8 修订
 
 - Read 小图改为两排：h·v 峰值在 FP 前一位置（is），surprisal 峰值在 FP 后一词（taking），中间 uh 用浅橙色列标出。
+
+## 13. v9：方向 × 阶段网格
+
+- 改为左右排版：左侧三行例句 → 三个 LM → FP / FPpred 立体块；右侧网格，行 = FP、FPpred、LM 自身 P(filler)，列 = Read / Use / Write。
+- 每个方向的箭头直接进入其所在行，各格内为使用该方向的实验；空格表示该方向未参与该阶段。
+- Read/FP 格保留 “Position readout (comparison)”（灰色）。Surprisal link 单列一行（LM 自身 P(filler)，不使用方向）。
+- Gated FP injection 放在 FP 行（注入的是 FP），FPpred 行引竖直虚线 “score as gate” 指向它。
+- 各列表头下保留机制小图；Write 列下方加 Gen 条（prompt → ⊕ LM → “the boy [FP] is …”）。
+- 去掉残差流横线；操作符号（· ⊖ ⊕）放进列表头。
