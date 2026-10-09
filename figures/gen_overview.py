@@ -71,7 +71,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 334
+W, H = 920, 342
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -140,7 +140,7 @@ v("", 25, PRY - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
 e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL)], tp=(WX, RL))
 
 # ======================= stages =======================
-PY, PH = 198, 128
+PY, PH = 206, 128
 WY, WH = 18, PY + PH - 18
 PANELS = {"Read": (8, 266, PY, PH), "Use": (282, 266, PY, PH), "Write": (WX, 912 - WX, WY, WH)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
@@ -153,20 +153,22 @@ for name, (x, w, y, h) in PANELS.items():
     tw = len(name) * 9 + 22
     v(f"<b>{name}</b>", x + 12, y - 11, tw, 22,
       f"rounded=1;arcSize=30;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;fontSize=13;fontColor={DARK};" + FONT)
-    # operation symbol sits on the arrow that brings the direction into the stage
-    OPS = f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=2;fontSize=13;fontStyle=1;" + FONT
+    # operation pill sits on the connector that brings the direction into the stage
+    sym = {"Read": "⊙", "Use": "⊖", "Write": "⊕"}[name]
+    plain = {"Read": "project h·v", "Use": "mean-ablate v", "Write": "add ασFv"}[name]
+    pw, ph = 26 + len(plain) * 6.4, 22
+    pill = (f"rounded=1;arcSize=50;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;"
+            f"fontSize=11.5;fontColor={DARK};spacingLeft=2;spacingRight=2;" + FONT)
+    label = f"<b style='font-size:14px'>{sym}</b>&nbsp;{formula}"
     if name != "Write":
         cx_ = x + w / 2
         oy = (RL + y) / 2
-        e(None, None, f"endArrow=none;strokeColor={LINE};strokeWidth=2;", sp=(cx_, RL), tp=(cx_, oy - 11))
-        v(op, cx_ - 11, oy - 11, 22, 22, OPS)
-        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2;", sp=(cx_, oy + 11), tp=(cx_, y))
-        text(f"<font color='{NOTE}'>{formula}</font>", cx_ + 16, oy - 9, 140, 18, 11.5, DARK)
         v("", cx_ - 4, RL - 4, 8, 8, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
+        e(None, None, f"endArrow=none;strokeColor={LINE};strokeWidth=1.8;", sp=(cx_, RL), tp=(cx_, oy))
+        e(None, None, f"endArrow=blockThin;endFill=1;endSize=5;strokeColor={LINE};strokeWidth=1.8;", sp=(cx_, oy), tp=(cx_, y))
+        v(label, cx_ - pw / 2, oy - ph / 2, pw, ph, pill)
     else:
-        ox = WX - 34
-        v(op, ox - 11, RL - 11, 22, 22, OPS)
-        text(f"<font color='{NOTE}'>{formula}</font>", ox - 50, RL - 32, 100, 18, 11.5, DARK, "center")
+        v(label, WX - pw - 26, RL - ph / 2, pw, ph, pill)
 
 # ---- Read: h·v peaks just before the FP
 x, w, y, h = PANELS["Read"]

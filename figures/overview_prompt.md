@@ -210,3 +210,7 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 
 - 阶段面板改为“大框 + 左上角小标题框（Read / Use / Write）”，去掉整条表头。
 - 操作符号 · ⊖ ⊕ 放到方向线进入各阶段的箭头上，旁注公式（project h·v / mean-ablate v / add ασ_F v），表示对表征的处理方式。
+
+## 25. v21
+
+- 操作符号改为连接线上的胶囊标签（⊙ project h·v / ⊖ mean-ablate v / ⊕ add ασ_F v），用各阶段的表头色；Read 符号由 · 改为 ⊙，与 ⊖ ⊕ 统一。
