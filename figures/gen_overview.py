@@ -137,7 +137,6 @@ e(None, None, f"endArrow=none;strokeColor={WARM_S};strokeWidth=2.4;", sp=(110, F
 e(None, None, f"endArrow=none;strokeColor={COOL_S};strokeWidth=2.4;", sp=(110, PRY), tp=(30, PRY))
 v("", 25, PRY - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
 e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL)], tp=(WX, RL))
-text(f"{serif('v')} ∈ {{FP, FPpred}}", 400, RL - 20, 140, 16, 12, LINE, "right")
 
 # ======================= stages =======================
 PY, PH = 176, 128
