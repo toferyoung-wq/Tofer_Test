@@ -19,8 +19,12 @@ FONT = "fontFamily=Helvetica;"
 TXT = "text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;" + FONT
 
 
+DY = [0]
+
+
 def v(value, x, y, w, h, style, cid=None):
     cid = cid or nid()
+    y += DY[0]
     cells.append(
         f'<mxCell id="{cid}" value="{q(value)}" style="{style}" vertex="1" parent="1">'
         f'<mxGeometry x="{x}" y="{y}" width="{w}" height="{h}" as="geometry"/></mxCell>')
@@ -36,6 +40,9 @@ def e(src=None, tgt=None, style="", pts=None, sp=None, tp=None, value="", lstyle
     s = f' source="{src}"' if src else ""
     t = f' target="{tgt}"' if tgt else ""
     geo = ""
+    sp = sp and (sp[0], sp[1] + DY[0])
+    tp = tp and (tp[0], tp[1] + DY[0])
+    pts = pts and [(a, b + DY[0]) for a, b in pts]
     if sp:
         geo += f'<mxPoint x="{sp[0]}" y="{sp[1]}" as="sourcePoint"/>'
     if tp:
@@ -71,7 +78,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 406
+W, H = 920, 362
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -87,46 +94,47 @@ def hline(x0, x1, y, style):
 
 # ======================= (a) Directions (compact) =======================
 uh = f'<span style="background-color:{FPHL}">&nbsp;uh&nbsp;</span>'
-s1 = text(f"the boy is {uh} taking a cookie", 8, 30, 176, 18, 12)
-s2 = text("the boy is taking a cookie", 8, 50, 176, 18, 12)
+s1 = text(f"the boy is {uh} taking a cookie", 8, 20, 176, 18, 12)
+s2 = text("the boy is taking a cookie", 8, 40, 176, 18, 12)
 pre = f'<span style="background-color:{COOL_F};border-bottom:2px solid {COOL_S}">&nbsp;is&nbsp;</span>'
-s3 = text(f"the boy {pre} uh taking a cookie", 8, 84, 176, 18, 12)
+s3 = text(f"the boy {pre} uh taking a cookie", 8, 68, 176, 18, 12)
 
-sx, sy, sw = 196, 26, 38
+sx, sy, sw = 196, 18, 38
 for k, (ox_, oy_) in enumerate(((10, -8), (5, -4), (0, 0))):
     front = k == 2
-    for i in range(8):
+    for i in range(7):
         hl = i == 2
         fill = ('#FFE0CC' if hl else '#ECEFF1') if front else ('#FFF1E8' if hl else '#F5F7F8')
         stroke = ('#F08A4B' if hl else '#B0BEC5') if front else ('#F6C3A2' if hl else '#D5DCE0')
-        v("", sx + ox_, sy + oy_ + i * 11, sw, 8,
+        v("", sx + ox_, sy + oy_ + i * 10, sw, 7,
           f"rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor={fill};strokeColor={stroke};")
 text(f"Llama-3.2-3B · Qwen2.5-1.5B · Qwen2.5-7B <font color='#F08A4B'>(block 21)</font>",
-     8, 116, 300, 14, 10.5, NOTE)
-for s, y in ((s1, 39), (s2, 59), (s3, 93)):
+     8, 92, 300, 14, 10.5, NOTE)
+for s, y in ((s1, 29), (s2, 49), (s3, 77)):
     e(s, None, FLOW, tp=(sx, y))
-m1 = v("−", 256, 40, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
-m2 = v("−", 256, 84, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
-e(None, m1, FLOW, sp=(sx + sw + 12, 49))
-e(None, m2, FLOW, sp=(sx + sw + 12, 93))
-c1 = v("", 304, 34, 30, 27, f"shape=cube;size=6;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.3;")
-c2 = v("", 304, 79, 30, 27, f"shape=cube;size=6;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.3;")
+m1 = v("−", 256, 30, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
+m2 = v("−", 256, 68, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
+e(None, m1, FLOW, sp=(sx + sw + 12, 39))
+e(None, m2, FLOW, sp=(sx + sw + 12, 77))
+c1 = v("", 304, 25, 30, 27, f"shape=cube;size=6;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.3;")
+c2 = v("", 304, 63, 30, 27, f"shape=cube;size=6;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.3;")
 e(m1, c1, FLOW)
 e(m2, c2, FLOW)
-text(f"<b>FP</b> <font style='font-size:10.5px' color='{NOTE}'>disfluent − fluent</font>", 340, 34, 150, 27, 13.5, WARM_S)
-text(f"<b>FPpred</b> <font style='font-size:10.5px' color='{NOTE}'>pre-FP − pre-ordinary</font>", 340, 79, 170, 27, 13.5, COOL_S)
+text(f"<b>FP</b> <font style='font-size:10.5px' color='{NOTE}'>disfluent − fluent</font>", 340, 25, 150, 27, 13.5, WARM_S)
+text(f"<b>FPpred</b> <font style='font-size:10.5px' color='{NOTE}'>pre-FP − pre-ordinary</font>", 340, 63, 170, 27, 13.5, COOL_S)
 
 # (a) -> (b)
 e(None, None, "shape=flexArrow;endArrow=classic;html=1;fillColor=#ECEFF1;strokeColor=#B0BEC5;width=9;endSize=5;endWidth=10;",
-  sp=(319, 112), tp=(319, 152))
-text(f"apply {serif('v')} at block 21", 332, 120, 150, 16, 11, NOTE)
+  sp=(319, 92), tp=(319, 132))
+text(f"apply {serif('v')} at block 21", 332, 104, 150, 16, 11, NOTE)
 
 # ======================= (b) Read / Use / Write =======================
+DY[0] = -20
 stream_y = 162
 e(None, None, "endArrow=blockThin;endFill=1;strokeColor=#90A4AE;strokeWidth=2.4;", sp=(8, stream_y), tp=(912, stream_y))
 text(f"residual stream {serif('h')}", 800, stream_y - 18, 112, 14, 10.5, NOTE, "right")
 
-top, bot = 180, 398
+top, bot = 180, 380
 cols = [
     ("Read", 8, 250, "#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
     ("Use", 266, 214, "#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
@@ -161,7 +169,7 @@ def word_strip(x0, y, words, dx, hl=None, size=10.5):
 # ---- Read glyph: projection score per position, pre-FP position stands out
 rx, rw = pos["Read"]
 words = ["the", "boy", "is", "taking", "a", "cookie"]
-base, dx, gx = 290, 34, rx + 26
+base, dx, gx = 264, 34, rx + 26
 scores = [8, 10, 30, 9, 7, 11]
 for i, sc in enumerate(scores):
     bar(gx + i * dx + 9, base, sc, COOL_S if i == 2 else GREY_BAR, w=10)
@@ -169,12 +177,12 @@ hline(gx, gx + 6 * dx, base, "strokeColor=#90A4AE;strokeWidth=1;")
 word_strip(gx, base + 2, words, dx, hl=2)
 text(f"<i>FP follows</i>", gx + 2 * dx + 18, base - 44, 70, 12, 9.5, COOL_S)
 text(f"{serif('h·v')}", rx + 6, base - 34, 22, 14, 11, NOTE)
-items(rx + 12, 318, rw - 16, [f"Position readout (AUC) {P}", f"Beyond covariates {P}", f"Surprisal link {P}"], dy=26)
+items(rx + 12, 290, rw - 16, [f"Position readout (AUC) {P}", f"Beyond covariates {P}", f"Surprisal link {P}"], dy=24)
 
 # ---- Use glyph: next-token distribution before (outline) / after (filled)
 ux, uw = pos["Use"]
 cands = ["uh", "the", "and", "boy"]
-base, dx, gx = 290, 44, ux + 32
+base, dx, gx = 264, 44, ux + 32
 before = [30, 22, 14, 10]
 after = [14, 22, 14, 10]
 for i, (b0, b1) in enumerate(zip(before, after)):
@@ -185,27 +193,27 @@ hline(gx - 6, gx + 4 * dx - 16, base, "strokeColor=#90A4AE;strokeWidth=1;")
 word_strip(gx + 7 - 8, base + 2, cands, dx, size=10.5)
 text("<i>P(next token)</i>", ux + 6, base - 46, 90, 12, 9.5, NOTE)
 text("<i>does P(uh) drop?</i>", gx + 22, base - 34, 100, 12, 9.5, WARM_S)
-items(ux + 12, 318, uw - 16, [f"Ablate FP {R}", f"Ablate FPpred {R}{P}"], dy=26)
+items(ux + 12, 290, uw - 16, [f"Ablate FP {R}", f"Ablate FPpred {R}{P}"], dy=24)
 
 # ---- Write: two sub-panels with their own glyphs
 wx, ww = pos["Write"]
 ug = (wx + 10, 168)
 et = (wx + 188, ww - 198)
 for (bx, bw), title in ((ug, "Ungated · every position"), (et, "Externally timed")):
-    v("", bx, 210, bw, 112, "rounded=1;arcSize=5;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
+    v("", bx, 210, bw, 102, "rounded=1;arcSize=5;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
     text(f"<i>{title}</i>", bx + 8, 212, bw - 10, 16, 10.5, "#7B1FA2")
 
 # ungated glyph: ⊕ above every position
-base, dx, gx = 266, 26, ug[0] + 18
+base, dx, gx = 262, 26, ug[0] + 18
 for i in range(6):
     x = gx + i * dx
     bar(x, base, 10, GREY_BAR, w=8)
     text("⊕", x - 4, base - 30, 16, 14, 12, "#7B1FA2", "center", "fontStyle=1;")
 hline(gx - 6, gx + 6 * dx - 10, base, "strokeColor=#90A4AE;strokeWidth=1;")
-items(ug[0] + 8, 278, ug[1] - 10, [f"Add FP {R}{P} {tag('TF · Gen')}", f"Add FPpred {R}{P} {tag('TF')}"], dy=22)
+items(ug[0] + 8, 270, ug[1] - 10, [f"Add FP {R}{P} {tag('TF · Gen')}", f"Add FPpred {R}{P} {tag('TF')}"], dy=22)
 
 # externally timed glyph: position scores, threshold, ⊕ only above it
-base, dx, gx = 268, 22, et[0] + 24
+base, dx, gx = 262, 22, et[0] + 24
 scores = [6, 9, 20, 8, 5, 24, 7, 9]
 for i, sc in enumerate(scores):
     x = gx + i * dx
@@ -218,32 +226,32 @@ hline(gx - 6, gx + 8 * dx - 6, base, "strokeColor=#90A4AE;strokeWidth=1;")
 hline(gx - 6, gx + 8 * dx - 6, thr, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
 text("top <i>k</i>%", gx + 8 * dx - 2, thr - 7, 40, 14, 10, "#7B1FA2")
 gate_x = gx + 5 * dx + 4
-items(et[0] + 8, 278, et[1] - 10, [
+items(et[0] + 8, 270, et[1] - 10, [
     f"Oracle timing {R}{P} {tag('Gen')}",
     f"Gated by FPpred {R}{P} {tag('TF · Gen')}",
 ], dy=22)
 
 
 # free generation strip: prompt -> steered LM -> description with fillers
-gy, gh = 328, 62
+gy, gh = 318, 54
 v("", wx + 10, gy, ww - 20, gh, "rounded=1;arcSize=6;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
 text(f"<i>Free generation</i> {tag('(Gen)')}", wx + 18, gy + 2, 160, 16, 10.5, "#7B1FA2")
-p_chip = v("Interviewer: …<br>Participant:", wx + 18, gy + 22, 128, 32,
+p_chip = v("Interviewer: …<br>Participant:", wx + 18, gy + 19, 128, 28,
            "rounded=1;arcSize=12;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=9.5;fontColor=#455A64;align=left;spacingLeft=4;whiteSpace=wrap;" + FONT)
-lx, ly = wx + 166, gy + 22
+lx, ly = wx + 166, gy + 18
 for i in range(4):
     v("", lx, ly + i * 8, 26, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
 text("⊕", lx + 22, ly - 8, 16, 14, 12, "#7B1FA2", "center", "fontStyle=1;")
 e(p_chip, None, FLOW, tp=(lx, ly + 15))
 fp = lambda w_: f'<span style="background-color:{FPHL}">{w_}</span>'
-o_chip = v(f"the boy {fp('uh')} is taking a cookie and {fp('um')} the mother is …", lx + 52, gy + 22, ww - 20 - (lx + 52 - wx - 10) - 10, 32,
+o_chip = v(f"the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is taking a cookie …", lx + 52, gy + 19, ww - 20 - (lx + 52 - wx - 10) - 10, 28,
            "rounded=1;arcSize=12;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#263238;align=left;spacingLeft=4;whiteSpace=wrap;" + FONT)
 e(None, o_chip, FLOW, sp=(lx + 28, ly + 15))
 
 # external gate: FPpred direction -> scores in the timed panel
 e(c2, None, f"endArrow=blockThin;endFill=1;dashed=1;strokeColor={COOL_S};strokeWidth=1.4;exitX=1;exitY=0.75;",
-  pts=[(gate_x, 99)], tp=(gate_x, base - 30 - 18))
-text("FPpred score as external gate", 560, 101, 190, 14, 10.5, COOL_S, "left", "fontStyle=2;")
+  pts=[(gate_x, 83 + 20)], tp=(gate_x, base - 30 - 18))
+text("FPpred score as external gate", 560, 85 + 20, 190, 14, 10.5, COOL_S, "left", "fontStyle=2;")
 
 xml = ('<mxfile host="drawio"><diagram id="overview" name="Overview">'
        f'<mxGraphModel dx="{W}" dy="{H}" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" '
