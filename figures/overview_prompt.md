@@ -110,3 +110,9 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - FPpred 也画出构造方式（`the boy [is] uh …`，pre-FP vs. pre-ordinary positions），与 FP 共用同一 LM 层叠块。
 - 门控虚线从 v_FPpred 出发，沿 (a) 行下方走到 Write 栏的门控分数条。
 - 当前布局以 `figures/gen_overview.py` 为准。
+
+## 8. v4 修订
+
+- 删除残差空间示意与 Data/Models 信息框；(a) 压缩为一行窄带，重点放在 (b) 三个阶段。
+- 每个阶段加机制小图：Read = 各位置 h·v 分数条（pre-FP 位置突出）；Use = 下一词分布，消融前虚框 / 后实心（"does P(uh) drop?"）；Write = 两个子面板，Ungated 每个位置都 ⊕，Externally timed 只在超过 top k% 阈值的位置 ⊕。
+- 阶段框加深色表头条；右上角图例同时解释 rate/placement 色点与 TF/Gen 标签。
