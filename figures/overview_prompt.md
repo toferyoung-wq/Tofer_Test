@@ -1,89 +1,105 @@
-# Overview figure — drawing prompt (draft v1)
+# Overview figure — drawing prompt (v2)
 
 > 用 `paper-flowchart` skill 执行。内容以《读、用、写：实验重新编号与数据总表》（2026-10-09）为准，不以旧版 main.tex 为准。
 
 ## 1. 目的与版式
 
-- ACL 论文 overview 图，只展示研究设计流程，**不放任何数值结果或结论**。
-- 通栏 `figure*`，横向，宽高比约 3:1（约 16 cm × 5.5 cm）。单页。
-- 全部标签英文；字号按缩放到 16 cm 宽后仍 ≥ 7 pt 设计。
-- 节点总数控制在约 22 个以内；面板内实验以竖排条目呈现，条目之间不连线。
+- ACL 论文 Figure 1（取代原 g·f 概念图），只展示研究设计主线，**不放数值、结论或对照细节**。
+- 通栏 `figure*`，横向，约 16 cm × 5.5 cm，宽高比约 3:1。单页。
+- 全部标签英文；按缩放到 16 cm 宽后字号 ≥ 7 pt 设计。数学符号用衬线斜体。
+- 风格参考：用具体对象（例句、层叠块、激活空间散点、概率条）讲机制，文字只做标签。分区标签为浅灰底、斜体无衬线（如 *Direction Construction*）。
 
 ## 2. 核心叙事约束
 
-- **Read / Use / Write 三个面板并列，彼此之间不画箭头。** 它们不是同一方向上已成立的因果链。
-- 唯一跨面板的连线：FPpred → Write 面板内的 Gated 区，**虚线**，标注 `external gate`，表示外部使用该分数，不代表模型原生依赖。
-- 全图主线是两个关键比对：**Rate（how many）** 与 **Placement（where）**。
+- **Read / Use / Write 三栏并列，彼此之间不画箭头**（不是已成立的因果链）。
+- 唯一跨栏连线：FPpred → Write 栏的门控菱形，**虚线**，标注 `external gate`。
+- 全图主线是两个关键比对：**Rate（how many, g）** 与 **Placement（where, f）**。
 
-## 3. 布局（从左到右）
+## 3. 布局
 
-### A. Inputs（窄列，中性灰）
+```
+┌ Direction Construction ┐ ┌ Activation space ┐ ┌──── Read ────┬──── Use ────┬──── Write ────┐
+│ ① 例句对 → LM 层叠块    │ │ ② 散点 + 方向箭头 │ │ ③ 残差流挂钩：  project · ⊖ ablate · ⊕ add   │
+│   → h差 → 方向立体块    │ │                   │ │   条目列表（短名 + 色点）                     │
+└────────────────────────┘ └───────────────────┘ └──────────────────────────────────────────────┘
+                                ┌──────────── Rate vs. Placement（横跨 Use + Write 下方）────────────┐
+                                │ ④ 词串 + 概率条：左 gain（全部升高） │ 右 timing（仅 FP 位置升高） │
+                                └────────────────────────────────────────────────────────────────────┘
+```
 
-- `Pitt Cookie Theft` 文档形：older adults' picture descriptions
-- 两个小子项：`Construction: 629 minimal pairs`；`Test: 445 FP vs 17,836 ordinary sites, 168 participants`
-- `Llama-3.2-3B · Qwen2.5-1.5B · Qwen2.5-7B`，`residual stream, block 21/28`
+### ① Direction Construction（左列）
 
-### B. Directions（4 个立体块，竖排）
+- 两行自拟示意句（Cookie Theft 场景，**不使用语料原句**）：
+  - disfluent：`the boy is uh taking a cookie`（`uh` 用橙色底标出）
+  - fluent：`the boy is taking a cookie`
+- 两句各入一个窄的竖向 Transformer 层叠块（约 6 层示意，标 `block 21/28` 的那层高亮），右侧标三个模型名小字：`Llama-3.2-3B · Qwen2.5-1.5B · Qwen2.5-7B`。
+- 取出末位置激活 `h_disfl`、`h_fluent`，经 `−` 运算小圆节点得到方向。
+- 方向集合：4 个小立体块竖排，旁注一行构造方式：
 
-| 方向 | 颜色 | 小字说明 |
+| 方向 | 颜色 | 旁注 |
 |---|---|---|
-| FP | 暖色（主干预方向） | disfluent − fluent, sentence-final |
-| PSEUDO | 灰 | optional-word control (*well, so*) |
-| FP⊥ | 暖色虚线描边 | FP with PSEUDO component removed |
-| FPpred | 冷色（读出方向） | pre-FP − pre-ordinary positions |
+| FP | 暖色 | disfluent − fluent |
+| PSEUDO | 灰 | optional-word pairs (*well, so*) |
+| FP⊥ | 暖色虚线描边 | FP − PSEUDO component |
+| FPpred | 冷色 | pre-FP − pre-ordinary positions |
 
-Inputs → Directions 一条实线；Directions 到三个面板各一条实线（从方向列右侧分出，不连到具体条目）。
+- 例句对只画 FP 的构造；PSEUDO、FPpred 只用旁注说明，不另画句子。
 
-### C. 三个并列面板
+### ② Activation space（中列，参考图的"嵌入空间"）
 
-每个面板顶部一行写操作公式，下面竖排实验条目。条目格式：`短名` + 右侧 Rate/Placement 色点（不显示 E 编号）。Q7 未覆盖的条目尾部加灰色小字 `3B/1.5B`。
+- 浅色圆形区域内散点：★ = upcoming-FP positions（橙色描边），○ = ordinary positions（灰）。
+- 两支实线箭头从同一原点出发，**彼此正交**：`v_FP`（暖色）、`v_FPpred`（冷色）。
+- 沿 `v_FPpred` 画一条细虚线投影轴，★ 大多落在轴的一端、○ 在另一端，示意"projection separates positions"。
+- 一支灰色虚线短箭头，标 `matched random controls`——全图唯一的对照标记。
+- 角落标 `schematic`（小号灰字）。
 
-**READ**（冰蓝底）— 操作：`project h·v`
-- Surprisal vs. filler propensity — ● P — `3B/1.5B`
-- Position readout (AUC) — ● P
-- Incremental prediction over covariates (ΔAUC) — ● P
+### ③ Read / Use / Write（右侧三栏，冰蓝 / 薄荷 / 淡紫底）
 
-**USE**（薄荷底）— 操作：`mean-ablate ⊖  h − (h·v − μ)v`
-- FP ablation vs. energy-matched controls — ● R
-- PSEUDO / FP⊥ specificity — ● R
-- FPpred ablation — ● R ● P
+三栏顶部共用一条横向残差流箭头 `residual stream h`，在每栏上方各有一个挂钩点：
 
-**WRITE**（淡紫底）— 操作：`add ⊕  h + ασ_F v`
-分两个子组（细虚线小容器）：
-- *Ungated*
-  - FP addition: gain vs. timing (TF) — ● R ● P
-  - Continuous FP injection (generation) — ● R ● P — `3B/1.5B`
-  - FPpred addition (TF) — ● R ● P
-  - Oracle-timed injection — ● R ● P — `3B/1.5B`
-- *Gated*（内含一个菱形：`FPpred score in top k%?`，是 → `inject FP +8σ_F`；对照 `own / random / always`）
-  - Gated teacher forcing — ● P
-  - Gated generation — ● R ● P — `3B/1.5B`
+| 栏 | 挂钩符号 | 公式（衬线斜体） |
+|---|---|---|
+| Read | 投影小圆 `·` | *h·v* |
+| Use | ⊖ | *h − (h·v − μ)v* |
+| Write | ⊕ | *h + ασ_F v* |
 
-### D. Evaluation 条（底部，横跨 USE 与 WRITE 面板下方）
+Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `external gate` 虚线；菱形"yes"分支连到 ⊕。
 
-一行公式居中：`P(filler at t) = g · f(context_t)`，其中 **g** 用 Rate 色、**f** 用 Placement 色。
+各栏条目（2–4 词短名 + 色点；`TF` / `Gen` 灰色小标签表示 teacher forcing / 自由生成）：
 
-| RATE — how many (g) | PLACEMENT — where (f) |
-|---|---|
-| TF: net Δlog P(filler) at all positions | TF: matched selectivity, FP vs. ordinary sites |
-| Gen: valid-FP outputs, FPs / 100 words | Gen: O/E at segment-initial / before content words |
+| Read | Use | Write |
+|---|---|---|
+| Position readout ●P | Ablate FP ●R | Add FP `TF` `Gen` ●R●P |
+| Beyond covariates ●P | FP⊥ specificity ●R | Add FPpred `TF` ●R●P |
+| Surprisal link ●P | Ablate FPpred ●R●P | Oracle timing `Gen` ●R●P |
+| | | Gated by FPpred `TF` `Gen` ●R●P |
 
-两格分别用实色细边框 + 极浅同色底。READ 面板条目的 P 色点表示"读出的是位置信息"，不连到 Evaluation 条。
+### ④ Rate vs. Placement（底部条，横跨 Use + Write）
+
+- 居中一行：*P*(filler at *t*) = ***g*** · ***f***(context*_t*)，g 用 Rate 色、f 用 Placement 色。
+- 左右两半各画同一个词串 `the boy is ▢ taking a cookie`，▢ 为橙色底的 FP 位置；每个位置下方一根细概率条（灰为 baseline，彩色为干预后增量）：
+  - 左 **Rate (g)**：所有条同比升高（琥珀色增量）；下方小字 `net Δlog P(filler), all positions · valid FPs per output`
+  - 右 **Placement (f)**：只有 ▢ 的条升高（青绿色增量）；下方小字 `FP vs. matched ordinary sites · O/E of generated FPs`
 
 ## 4. 配色
 
-- 面板底色按 `paper-flowchart` 规范：READ 冰蓝 `#E6F3FF`、USE 薄荷 `#E0F2F1`、WRITE 淡紫 `#F3E5F5`。
-- **Rate = 琥珀 `#E69F00`，Placement = 青绿 `#009E73`**—— 全图仅这两处实色，用于色点、g/f 和 Evaluation 两格边框。
-- 无高饱和红色（不展示结果）。
+- 栏底色：Read `#E6F3FF`、Use `#E0F2F1`、Write `#F3E5F5`；其余区域白底，分区标签浅灰 `#EEEEEE`。
+- FP 位置 / `uh` 高亮：浅橙 `#FAD7B5`。
+- **Rate = 琥珀 `#E69F00`，Placement = 青绿 `#009E73`**（Okabe–Ito）：仅用于色点、g/f、④ 的增量条与两格边框。
+- 不使用高饱和红色。
 
-## 5. 不画的内容
+## 5. 不画的内容（放图注或正文）
 
-- 任何数值、CI、p 值、结论标记。
-- REP / REPpred 及 S-REP、W-S1、S0、S-ROB 等补充项。
-- 剂量网格细节、解码参数、预算数值（仅在 Gated 菱形中写 `top k%`）。
+- 数值、CI、p 值、结论标记；E1–E12 编号。
+- 对照数量（3 / 20 条）、剂量网格（±2/4/8 σ_F、s_pos）、门控预算（2.5% / 10%）、own / always 条件。
+- 解码设置、prompt 基线、层比较、大激活修正。
+- REP / REPpred 与全部补充项（S0、S-REP、S-ROB、W-S1）。
 
 ## 6. 已定事项
 
-1. 本图取代现有 Figure 1（g·f 概念图压缩进 Evaluation 条）。
-2. 不显示 E1–E12 编号。
-3. Rate / Placement = 琥珀 / 青绿（Okabe–Ito）。
+1. 本图取代现有 Figure 1。
+2. 不显示 E 编号。
+3. Rate / Placement = 琥珀 / 青绿。
+4. 实验列表只保留主线短名；对照仅保留"FP vs. matched ordinary sites"（④）和一个统一的随机控制标记（②）。
+5. ② 中 v_FP 与 v_FPpred 画成正交，标 `schematic`。
+6. 例句自拟。
