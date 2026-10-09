@@ -143,3 +143,12 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - Gated FP injection 放在 FP 行（注入的是 FP），FPpred 行引竖直虚线 “score as gate” 指向它。
 - 各列表头下保留机制小图；Write 列下方加 Gen 条（prompt → ⊕ LM → “the boy [FP] is …”）。
 - 去掉残差流横线；操作符号（· ⊖ ⊕）放进列表头。
+
+## 14. v10：左构建 + 右侧上下三阶段
+
+- 左：三行例句 → 三层错位 LM（不写模型名）→ FP / FPpred。
+- 两个方向各一条彩色总线，向 Read / Use / Write 三个面板各引一支箭头；不再按方向分格。
+- 每个面板：左侧竖排阶段名 + 操作公式 + 分析条目（条目前用 FP / FPpred / LM 彩色小标签表明用了哪个表征）；右侧一张分布示意图：
+  - Read：h·v_FPpred 与 surprisal 两排位置分布（is / taking 峰值，uh 列高亮）。
+  - Use：下一词概率分布，消融前虚框 / 后实心（filler 降低）。
+  - Write：every position vs. selected positions（top k%），下方 Gen 条。

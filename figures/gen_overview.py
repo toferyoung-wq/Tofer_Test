@@ -71,11 +71,12 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 340
+W, H = 920, 386
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
 PURPLE = "#7B1FA2"
+AXIS = "strokeColor=#90A4AE;strokeWidth=1;"
 
 
 def bar(x, base, h, fill, w=8, extra=""):
@@ -86,194 +87,174 @@ def hline(x0, x1, y, style):
     e(None, None, "endArrow=none;" + style, sp=(x0, y), tp=(x1, y))
 
 
-def item(s_, x, y, w, size=12, color=DARK, extra=""):
-    return text(s_, x, y, w, 18, size, color, "left", extra)
+def chip(name):
+    f, c = {"FP": (WARM_F, WARM_S), "FPpred": (COOL_F, COOL_S), "LM": ("#ECEFF1", "#78909C")}[name]
+    return (f'<span style="background-color:{f};color:{c};font-size:10px;font-weight:bold">'
+            f'&nbsp;{name}&nbsp;</span>')
 
 
-# ---------------- grid geometry ----------------
-GX = 304                       # grid left edge
-COLS = {"Read": (GX, 176), "Use": (GX + 180, 140), "Write": (GX + 324, 912 - GX - 324)}
-HEAD_Y, HEAD_H = 8, 22
-GLY_Y, GLY_H = 30, 76
-ROWS = {"FP": (112, 80), "FPpred": (196, 62), "LM": (262, 32)}
-GRID_BOT = 294
-ROW_TINT = {"FP": "#FFF5EE", "FPpred": "#F0F6FC", "LM": "#F6F7F8"}
-COL_STYLE = {"Read": ("#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
-             "Use": ("#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
-             "Write": ("#EBD5F0", "#BF8FCC", "⊕", f"add {serif('ασ')}<sub>F</sub>{serif('v')}")}
-
-# row bands (span whole grid)
-for r, (y, h) in ROWS.items():
-    v("", GX, y, 912 - GX, h, f"rounded=0;html=1;fillColor={ROW_TINT[r]};strokeColor=none;")
-# column headers, glyph panels, column frames
-for c, (x, w) in COLS.items():
-    head, stroke, op, formula = COL_STYLE[c]
-    v("", x, HEAD_Y, w, GRID_BOT - HEAD_Y, f"rounded=1;arcSize=2;html=1;fillColor=none;strokeColor={stroke};strokeWidth=1.2;")
-    v("", x, HEAD_Y, w, HEAD_H, f"rounded=1;arcSize=14;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;")
-    v(op, x + 6, HEAD_Y + 2, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.5;fontSize=12;fontStyle=1;" + FONT)
-    text(f"<b>{c}</b>&nbsp;&nbsp;<font style='font-size:11px' color='{DARK}'>{formula}</font>", x + 28, HEAD_Y + 1, w - 30, 20, 13.5, DARK)
-# row separators
-for r, (y, h) in ROWS.items():
-    hline(GX, 912, y, "strokeColor=#E0E0E0;strokeWidth=1;")
-hline(GX, 912, GRID_BOT, "strokeColor=#E0E0E0;strokeWidth=1;")
+def row(x, y, w, chips, label, dots="", tags="", color=DARK):
+    s_ = " ".join(chip(c) for c in chips) + f"&nbsp; {label}"
+    if dots:
+        s_ += f" {dots}"
+    if tags:
+        s_ += f" {tag(tags)}"
+    return text(s_, x, y, w, 18, 12, color)
 
 
-def cell(col, row):
-    x, w = COLS[col]
-    y, h = ROWS[row]
-    return x + 8, y, w - 12, h
-
-
-# ---------------- column glyphs ----------------
-# Read: h·v peaks before the FP, surprisal peaks on the word after it
-x, w = COLS["Read"]
-words = ["boy", "is", "uh", "taking", "a"]
-dx, gx = 26, x + 40
-b1, b2 = GLY_Y + 32, GLY_Y + 60
-hv = [8, 20, 0, 7, 5]
-sp_ = [7, 6, 0, 18, 6]
-v("", gx + 2 * dx + 1, GLY_Y + 6, 24, 70, f"rounded=0;html=1;strokeColor=none;fillColor={FPHL};opacity=60;")
-for i in range(len(words)):
-    if i == 2:
-        continue
-    bar(gx + i * dx + 8, b1, hv[i], COOL_S if i == 1 else GREY_BAR, w=9)
-    bar(gx + i * dx + 8, b2, sp_[i], "#78909C" if i == 3 else GREY_BAR, w=9)
-for yy in (b1, b2):
-    hline(gx, gx + len(words) * dx, yy, "strokeColor=#90A4AE;strokeWidth=1;")
-for i, wd in enumerate(words):
-    text(wd, gx + i * dx - 6, b2 + 1, dx + 12, 12, 9.5, "#455A64", "center")
-text(f"{serif('h·v')}", x + 4, b1 - 13, 36, 12, 10.5, COOL_S)
-text("surprisal", x + 2, b2 - 13, 40, 12, 9, "#78909C")
-
-# Use: next-token distribution before (dashed) / after (filled)
-x, w = COLS["Use"]
-cands = ["uh", "the", "and"]
-base, dx, gx = GLY_Y + 58, 38, x + 26
-for i, (b0, b1_) in enumerate(zip([26, 18, 12], [12, 18, 12])):
-    xx = gx + i * dx
-    bar(xx, base, b0, "none", w=13, extra="strokeColor=#90A4AE;dashed=1;strokeWidth=1;")
-    bar(xx, base, b1_, WARM_S if i == 0 else GREY_BAR, w=13)
-    text(cands[i], xx - 10, base + 1, 33, 12, 9.5, "#455A64", "center")
-hline(gx - 6, gx + 3 * dx - 16, base, "strokeColor=#90A4AE;strokeWidth=1;")
-text("<i>P(next token)</i>", x + 6, GLY_Y + 2, 90, 12, 9, NOTE)
-text("<i>P(uh) drops?</i>", gx + 26, GLY_Y + 18, 80, 12, 9, WARM_S)
-
-# Write: every position vs. selected positions
-x, w = COLS["Write"]
-base = GLY_Y + 60
-text("<i>every position</i>", x + 10, GLY_Y + 2, 110, 12, 9.5, PURPLE)
-gx = x + 16
-for i in range(5):
-    xx = gx + i * 22
-    bar(xx, base, 8, GREY_BAR, w=8)
-    text("⊕", xx - 4, base - 26, 16, 14, 11, PURPLE, "center", "fontStyle=1;")
-hline(gx - 4, gx + 5 * 22 - 8, base, "strokeColor=#90A4AE;strokeWidth=1;")
-text("<i>selected positions</i>", x + 140, GLY_Y + 2, 130, 12, 9.5, PURPLE)
-gx = x + 146
-sc = [6, 9, 22, 7, 5, 18, 8]
-thr = base - 13
-for i, h_ in enumerate(sc):
-    xx = gx + i * 18
-    over = h_ > 13
-    bar(xx, base, h_, COOL_S if over else GREY_BAR, w=8)
-    if over:
-        text("⊕", xx - 4, base - h_ - 15, 16, 14, 11, PURPLE, "center", "fontStyle=1;")
-hline(gx - 4, gx + 7 * 18 - 6, base, "strokeColor=#90A4AE;strokeWidth=1;")
-hline(gx - 4, gx + 7 * 18 - 6, thr, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
-
-# ---------------- cell contents ----------------
-def tagged(name, dots, tags=""):
-    return f"{name} {dots}" + (f" {tag(tags)}" if tags else "")
-
-
-cx, cy, cw, ch = cell("Read", "FP")
-item(tagged("Position readout", P) + f" {tag('(comparison)')}", cx, cy + 8, cw, 12, "#78909C")
-cx, cy, cw, ch = cell("Use", "FP")
-item(tagged("Ablate FP", R), cx, cy + 8, cw)
-cx, cy, cw, ch = cell("Write", "FP")
-item(tagged("Add FP", R + P, "TF · Gen"), cx, cy + 6, cw)
-item(tagged("Oracle timing", R + P, "Gen"), cx, cy + 30, cw)
-gated = item(tagged("Gated FP injection", R + P, "TF · Gen"), cx, cy + 54, cw)
-
-cx, cy, cw, ch = cell("Read", "FPpred")
-item(tagged("Position readout", P), cx, cy + 8, cw)
-item(tagged("Beyond covariates", P), cx, cy + 32, cw)
-cx, cy, cw, ch = cell("Use", "FPpred")
-item(tagged("Ablate FPpred", R + P), cx, cy + 8, cw)
-cx, cy, cw, ch = cell("Write", "FPpred")
-item(tagged("Add FPpred", R + P, "TF"), cx, cy + 8, cw)
-gate_lbl = item(f"<i>score as gate</i>", cx + 128, cy + 33, 110, 11, COOL_S)
-
-cx, cy, cw, ch = cell("Read", "LM")
-item(tagged("Surprisal link", P), cx, cy + 7, cw)
-for c in ("Use", "Write"):
-    cx, cy, cw, ch = cell(c, "LM")
-    text("—", cx, cy + 7, cw, 18, 12, "#B0BEC5", "center")
-
-# gate: FPpred score selects positions for the FP injection
-gx_ = COLS["Write"][0] + 128
-e(None, None, f"endArrow=blockThin;endFill=1;dashed=1;strokeColor={COOL_S};strokeWidth=1.4;",
-  sp=(gx_, ROWS["FPpred"][0] + 40), tp=(gx_, ROWS["FP"][0] + 73))
-
-
-# free generation, used by the Gen-tagged Write analyses
-wx_, ww_ = COLS["Write"]
-gy = GRID_BOT + 6
-v("", wx_, gy, ww_, 34, "rounded=1;arcSize=10;html=1;fillColor=#FAF3FB;strokeColor=#BF8FCC;strokeWidth=1.2;")
-text(f"<b>Gen</b>", wx_ + 6, gy + 8, 34, 18, 11.5, PURPLE)
-pc = v("prompt", wx_ + 40, gy + 7, 52, 20,
-       "rounded=1;arcSize=20;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=9;fontColor=#455A64;whiteSpace=wrap;" + FONT)
-lx = wx_ + 104
-for i in range(3):
-    v("", lx, gy + 8 + i * 7, 22, 5, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
-text("⊕", lx + 16, gy + 1, 16, 12, 10, PURPLE, "center", "fontStyle=1;")
-e(pc, None, FLOW, tp=(lx, gy + 17))
-oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is …", lx + 40, gy + 7, ww_ - (lx + 40 - wx_) - 8, 20,
-       "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=10;fontColor=#263238;whiteSpace=wrap;" + FONT)
-e(None, oc, FLOW, sp=(lx + 24, gy + 17))
-
-# ---------------- left: direction construction ----------------
-text(f"<b>Three base LMs</b><br><font color='{NOTE}'>Llama-3.2-3B<br>Qwen2.5-1.5B · Qwen2.5-7B</font><br>"
-     f"<font color='#F08A4B'>residual stream, block 21</font>", 8, 18, 220, 72, 11.5, DARK, "left", "verticalAlign=top;")
-
+# ======================= left: direction construction =======================
 uh = f'<span style="background-color:{FPHL}">&nbsp;uh&nbsp;</span>'
 pre = f'<span style="background-color:{COOL_F};border-bottom:2px solid {COOL_S}">&nbsp;is&nbsp;</span>'
-s1 = text(f"the boy is {uh} taking a cookie", 8, 124, 166, 18, 11.5)
-s2 = text("the boy is taking a cookie", 8, 144, 166, 18, 11.5)
-text("disfluent − fluent pairs", 8, 164, 166, 14, 10, NOTE)
-s3 = text(f"the boy {pre} uh taking a cookie", 8, 208, 166, 18, 11.5)
-text("pre-FP − pre-ordinary positions", 8, 228, 166, 14, 10, NOTE)
+FPY, PRY = 150, 236                      # row centres of FP / FPpred
+s1 = text(f"the boy is {uh} taking a cookie", 8, FPY - 22, 170, 18, 12)
+s2 = text("the boy is taking a cookie", 8, FPY - 2, 170, 18, 12)
+text("disfluent − fluent pairs", 8, FPY + 18, 170, 14, 10, NOTE)
+s3 = text(f"the boy {pre} uh taking a cookie", 8, PRY - 9, 170, 18, 12)
+text("pre-FP − pre-ordinary positions", 8, PRY + 11, 170, 14, 10, NOTE)
 
-sx, sy, sw = 182, 118, 30
-for k, (ox_, oy_) in enumerate(((8, -6), (4, -3), (0, 0))):
+sx, sy, sw = 190, FPY - 40, 32
+for k, (ox_, oy_) in enumerate(((10, -8), (5, -4), (0, 0))):
     front = k == 2
     for i in range(11):
         hl = i == 3
         fill = ('#FFE0CC' if hl else '#ECEFF1') if front else ('#FFF1E8' if hl else '#F5F7F8')
         stroke = ('#F08A4B' if hl else '#B0BEC5') if front else ('#F6C3A2' if hl else '#D5DCE0')
-        v("", sx + ox_, sy + oy_ + i * 13, sw, 8,
+        v("", sx + ox_, sy + oy_ + i * 15, sw, 9,
           f"rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor={fill};strokeColor={stroke};")
-for s_, y in ((s1, 133), (s2, 153), (s3, 217)):
+for s_, y in ((s1, FPY - 13), (s2, FPY + 7), (s3, PRY)):
     e(s_, None, FLOW, tp=(sx, y))
 
-ROWC = {r: y + h / 2 for r, (y, h) in ROWS.items()}
-m1 = v("−", 228, ROWC["FP"] - 9, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
-m2 = v("−", 228, ROWC["FPpred"] - 9, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
-e(None, m1, FLOW, sp=(sx + sw + 8, ROWC["FP"]))
-e(None, m2, FLOW, sp=(sx + sw + 8, ROWC["FPpred"]))
-c1 = v("", 256, ROWC["FP"] - 12, 26, 24, f"shape=cube;size=6;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.3;")
-c2 = v("", 256, ROWC["FPpred"] - 12, 26, 24, f"shape=cube;size=6;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.3;")
+m1 = v("−", 240, FPY - 9, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
+m2 = v("−", 240, PRY - 9, 18, 18, "ellipse;html=1;fillColor=#FFFFFF;strokeColor=#546E7A;fontSize=13;fontStyle=1;" + FONT)
+e(None, m1, FLOW, sp=(sx + sw + 10, FPY))
+e(None, m2, FLOW, sp=(sx + sw + 10, PRY))
+c1 = v("", 270, FPY - 13, 28, 26, f"shape=cube;size=6;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.3;")
+c2 = v("", 270, PRY - 13, 28, 26, f"shape=cube;size=6;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.3;")
 e(m1, c1, FLOW)
 e(m2, c2, FLOW)
-text("<b>FP</b>", 244, ROWC["FP"] - 30, 50, 16, 12.5, WARM_S, "center")
-text("<b>FPpred</b>", 236, ROWC["FPpred"] - 30, 66, 16, 12.5, COOL_S, "center")
-e(c1, None, f"endArrow=blockThin;endFill=1;strokeColor={WARM_S};strokeWidth=2.4;", tp=(GX, ROWC["FP"]))
-e(c2, None, f"endArrow=blockThin;endFill=1;strokeColor={COOL_S};strokeWidth=2.4;", tp=(GX, ROWC["FPpred"]))
+text("<b>FP</b>", 258, FPY - 32, 52, 16, 13, WARM_S, "center")
+text("<b>FPpred</b>", 250, PRY - 32, 68, 16, 13, COOL_S, "center")
 
-# LM's own output row
-lm_lbl = text(f"LM's own {serif('P')}(filler)", 150, ROWC["LM"] - 9, 140, 18, 11.5, NOTE, "right")
-e(None, None, "endArrow=blockThin;endFill=1;strokeColor=#90A4AE;strokeWidth=1.6;", sp=(sx + 15, sy + 10 * 13 + 10),
-  pts=[(sx + 15, ROWC["LM"] + 12), (GX - 30, ROWC["LM"] + 12)], tp=(GX, ROWC["LM"] + 12))
+# ======================= right: three stages, top to bottom =======================
+PX = 352
+PW = 912 - PX
+PANELS = {"Read": (8, 112), "Use": (128, 104), "Write": (240, 140)}
+STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
+         "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
+         "Write": ("#FAF3FB", "#EBD5F0", "#BF8FCC", "⊕", f"add {serif('ασ')}<sub>F</sub>{serif('v')}")}
+LIST_W = 250                 # left part of each panel: header + analyses
+CH_X = PX + LIST_W + 16      # chart area
+CH_W = 912 - CH_X - 12
+
+for name, (y, h) in PANELS.items():
+    body, head, stroke, op, formula = STYLE[name]
+    v("", PX, y, PW, h, f"rounded=1;arcSize=4;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
+    v("", PX, y, 26, h, f"rounded=1;arcSize=20;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;")
+    v(op, PX + 4, y + 6, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.5;fontSize=12;fontStyle=1;" + FONT)
+    text(f"<b>{name}</b>", PX + 1, y + 30, 24, h - 36, 13, DARK, "center", "horizontal=0;")
+    text(f"<font color='{NOTE}' style='font-size:11px'>{formula}</font>", PX + 34, y + 4, LIST_W - 20, 16, 11, DARK)
+
+# fan-in from both directions to every stage
+e(c1, None, f"endArrow=none;strokeColor={WARM_S};strokeWidth=2;", tp=(318, FPY))
+e(c2, None, f"endArrow=none;strokeColor={COOL_S};strokeWidth=2;", tp=(330, PRY))
+for colr, xoff, cy_ in ((WARM_S, 318, FPY), (COOL_S, 330, PRY)):
+    e(None, None, f"endArrow=none;strokeColor={colr};strokeWidth=2;", sp=(xoff, PANELS['Read'][0] + 30), tp=(xoff, PANELS['Write'][0] + 40))
+    for name, (y, h) in PANELS.items():
+        yy = y + 30 + (0 if colr == WARM_S else 10)
+        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={colr};strokeWidth=1.6;", sp=(xoff, yy), tp=(PX, yy))
+
+# ---- Read: analyses + two-row distribution over positions
+y0, h0 = PANELS["Read"]
+lx = PX + 34
+row(lx, y0 + 24, LIST_W, ["FPpred"], "Position readout (AUC)", P)
+row(lx, y0 + 44, LIST_W, ["FPpred"], "Beyond covariates (ΔAUC)", P)
+row(lx, y0 + 64, LIST_W, ["FP"], "Position readout", P, "comparison", "#78909C")
+row(lx, y0 + 86, LIST_W, ["LM"], "Surprisal link", P)
+words = ["the", "boy", "is", "uh", "taking", "a", "cookie"]
+dx = 34
+gx = CH_X + 46
+b1, b2 = y0 + 44, y0 + 84
+v("", gx + 3 * dx + 1, y0 + 8, 32, 96, f"rounded=0;html=1;strokeColor=none;fillColor={FPHL};opacity=60;")
+hv = [6, 8, 26, 0, 7, 5, 8]
+sp_ = [6, 7, 6, 0, 24, 6, 8]
+for i in range(len(words)):
+    if i == 3:
+        continue
+    bar(gx + i * dx + 11, b1, hv[i], COOL_S if i == 2 else GREY_BAR, w=12)
+    bar(gx + i * dx + 11, b2, sp_[i], "#78909C" if i == 4 else GREY_BAR, w=12)
+for yy in (b1, b2):
+    hline(gx, gx + len(words) * dx, yy, AXIS)
+for i, wd in enumerate(words):
+    text(wd, gx + i * dx - 4, b2 + 2, dx + 8, 14, 10.5, "#455A64", "center")
+text(f"{serif('h')}·{serif('v')}<sub>FPpred</sub>", CH_X - 4, b1 - 16, 56, 14, 10.5, COOL_S)
+text("surprisal", CH_X - 4, b2 - 16, 52, 14, 10, "#78909C")
+
+# ---- Use: next-token distribution, before (dashed) vs after ablation (filled)
+y0, h0 = PANELS["Use"]
+row(lx, y0 + 30, LIST_W, ["FP"], "Ablate FP", R)
+row(lx, y0 + 54, LIST_W, ["FPpred"], "Ablate FPpred", R + P)
+text(f"<i>vs. matched random directions</i>", lx, y0 + 78, LIST_W, 14, 10, NOTE)
+cands = ["uh", "the", "and", "boy", "a", "um"]
+before = [30, 22, 15, 12, 9, 14]
+after = [14, 22, 15, 12, 9, 7]
+base, dx, gx = y0 + 80, 40, CH_X + 50
+for i in range(len(cands)):
+    xx = gx + i * dx
+    bar(xx, base, before[i], "none", w=16, extra="strokeColor=#90A4AE;dashed=1;strokeWidth=1;")
+    filler = cands[i] in ("uh", "um")
+    bar(xx, base, after[i], WARM_S if filler else GREY_BAR, w=16)
+    text(cands[i], xx - 12, base + 2, 40, 14, 10.5, "#455A64", "center")
+hline(gx - 8, gx + len(cands) * dx - 20, base, AXIS)
+text("<i>P(next token)</i>", CH_X - 4, y0 + 8, 100, 14, 10, NOTE)
+text(f"dashed: before&nbsp;&nbsp; <span style='color:{WARM_S}'>■</span> after ablation",
+     CH_X + 140, y0 + 8, 160, 14, 10, NOTE)
+
+# ---- Write: every position vs selected positions, plus free generation
+y0, h0 = PANELS["Write"]
+row(lx, y0 + 26, LIST_W, ["FP"], "Add FP", R + P, "TF · Gen")
+row(lx, y0 + 48, LIST_W, ["FPpred"], "Add FPpred", R + P, "TF")
+row(lx, y0 + 70, LIST_W, ["FP"], "Oracle timing", R + P, "Gen")
+row(lx, y0 + 92, LIST_W, ["FP", "FPpred"], "Gated injection", R + P, "TF · Gen")
+text(f"<i>{chip('FPpred')} score chooses where {chip('FP')} is added</i>", lx, y0 + 112, LIST_W, 14, 10, NOTE)
+
+half = (CH_W - 10) // 2
+for k, title in enumerate(("every position", "selected positions")):
+    bx = CH_X + k * (half + 10)
+    text(f"<i>{title}</i>", bx, y0 + 6, half, 14, 10.5, PURPLE)
+    base = y0 + 62
+    n = 5 if k == 0 else 7
+    ddx = (half - 20) / n
+    sc = [7, 10, 24, 8, 6, 20, 9]
+    for i in range(n):
+        xx = bx + 10 + i * ddx
+        if k == 0:
+            bar(xx, base, 8, GREY_BAR, w=9)
+            text("⊕", xx - 3, base - 26, 16, 14, 11, PURPLE, "center", "fontStyle=1;")
+        else:
+            over = sc[i] > 14
+            bar(xx, base, sc[i], COOL_S if over else GREY_BAR, w=9)
+            if over:
+                text("⊕", xx - 3, base - sc[i] - 16, 16, 14, 11, PURPLE, "center", "fontStyle=1;")
+    hline(bx + 4, bx + half - 6, base, AXIS)
+    if k == 1:
+        hline(bx + 4, bx + half - 6, base - 14, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
+        text("top <i>k</i>%", bx + half - 40, base - 28, 40, 12, 9.5, PURPLE, "right")
+
+# free generation strip inside the Write panel
+gy = y0 + 84
+v("", CH_X, gy, CH_W, 44, "rounded=1;arcSize=10;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;")
+text(f"<b>Gen</b>", CH_X + 6, gy + 13, 34, 18, 11.5, PURPLE)
+pc = v("picture prompt", CH_X + 42, gy + 11, 84, 22,
+       "rounded=1;arcSize=20;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=10;fontColor=#455A64;whiteSpace=wrap;" + FONT)
+gl = CH_X + 140
+for i in range(3):
+    v("", gl, gy + 12 + i * 8, 24, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
+text("⊕", gl + 18, gy + 2, 16, 12, 10, PURPLE, "center", "fontStyle=1;")
+e(pc, None, FLOW, tp=(gl, gy + 22))
+oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is …",
+       gl + 40, gy + 11, CH_W - (gl + 40 - CH_X) - 8, 22,
+       "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#263238;whiteSpace=wrap;" + FONT)
+e(None, oc, FLOW, sp=(gl + 26, gy + 22))
 
 xml = ('<mxfile host="drawio"><diagram id="overview" name="Overview">'
        f'<mxGraphModel dx="{W}" dy="{H}" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" '
