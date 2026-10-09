@@ -177,3 +177,9 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - 去掉各面板的实验条目，每个阶段只保留一张分布示意图（Write 含 every / selected positions 与 Gen 条）。
 - FP 与 FPpred 在左侧汇合成一条线（v ∈ {FP, FPpred}），从左往右，每个阶段一个接头。
 - 宽高比约 2.8:1。
+
+## 19. v15
+
+- Read 只保留 h·v 一排；Use 只保留消融前后分布图，去掉标题与图例文字；删除右上注释。
+- Write 面板改为右侧整高，向上延伸占据右上空白；方向线从左往右，接 Read、Use 后直接进入 Write 左侧。
+- Write 内上下三块：every position / selected positions (top k%) / free generation。
