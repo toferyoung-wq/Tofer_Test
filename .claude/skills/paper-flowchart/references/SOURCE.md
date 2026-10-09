@@ -1,0 +1,1 @@
+references/neurips2025_diagram_style_guide.md is copied unchanged from https://github.com/dwzhu-pku/PaperBanana (style_guides/) at commit 836455537e863b5a2f40dace487a782c0bc5ef94. Apache-2.0, see LICENSE-PaperBanana.
