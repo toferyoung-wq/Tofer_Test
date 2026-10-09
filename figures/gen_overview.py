@@ -71,7 +71,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 312
+W, H = 920, 334
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -140,8 +140,8 @@ v("", 25, PRY - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
 e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL)], tp=(WX, RL))
 
 # ======================= stages =======================
-PY, PH = 176, 128
-WY, WH = 8, PY + PH - 8
+PY, PH = 198, 128
+WY, WH = 18, PY + PH - 18
 PANELS = {"Read": (8, 266, PY, PH), "Use": (282, 266, PY, PH), "Write": (WX, 912 - WX, WY, WH)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
          "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
@@ -149,17 +149,24 @@ STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v'
 for name, (x, w, y, h) in PANELS.items():
     body, head, stroke, op, formula = STYLE[name]
     v("", x, y, w, h, f"rounded=1;arcSize=3;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
-    v("", x, y, w, 24, f"rounded=1;arcSize=12;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;")
-    # centred header: [op] Name  formula  (text width estimated from character counts)
-    plain = {"Read": "project h·v", "Use": "mean-ablate v", "Write": "add ασFv"}[name]
-    tw = len(name) * 9 + 10 + len(plain) * 6.3
-    hx0 = x + (w - (18 + 6 + tw)) / 2
-    v(op, hx0, y + 3, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.6;fontSize=12;fontStyle=1;" + FONT)
-    text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", hx0 + 24, y + 2, tw + 20, 20, 14, DARK)
+    # small title tab straddling the frame's top-left corner
+    tw = len(name) * 9 + 22
+    v(f"<b>{name}</b>", x + 12, y - 11, tw, 22,
+      f"rounded=1;arcSize=30;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;fontSize=13;fontColor={DARK};" + FONT)
+    # operation symbol sits on the arrow that brings the direction into the stage
+    OPS = f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=2;fontSize=13;fontStyle=1;" + FONT
     if name != "Write":
         cx_ = x + w / 2
-        v("", cx_ - 5, RL - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
-        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2;", sp=(cx_, RL), tp=(cx_, y))
+        oy = (RL + y) / 2
+        e(None, None, f"endArrow=none;strokeColor={LINE};strokeWidth=2;", sp=(cx_, RL), tp=(cx_, oy - 11))
+        v(op, cx_ - 11, oy - 11, 22, 22, OPS)
+        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2;", sp=(cx_, oy + 11), tp=(cx_, y))
+        text(f"<font color='{NOTE}'>{formula}</font>", cx_ + 16, oy - 9, 140, 18, 11.5, DARK)
+        v("", cx_ - 4, RL - 4, 8, 8, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
+    else:
+        ox = WX - 34
+        v(op, ox - 11, RL - 11, 22, 22, OPS)
+        text(f"<font color='{NOTE}'>{formula}</font>", ox - 50, RL - 32, 100, 18, 11.5, DARK, "center")
 
 # ---- Read: h·v peaks just before the FP
 x, w, y, h = PANELS["Read"]

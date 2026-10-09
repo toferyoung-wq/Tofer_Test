@@ -205,3 +205,8 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 ---
 
 **暂定稿：v19（commit 3dcc1df）。** 后续修改改 `figures/gen_overview.py` 后重新生成 `overview.drawio`。
+
+## 24. v20
+
+- 阶段面板改为“大框 + 左上角小标题框（Read / Use / Write）”，去掉整条表头。
+- 操作符号 · ⊖ ⊕ 放到方向线进入各阶段的箭头上，旁注公式（project h·v / mean-ablate v / add ασ_F v），表示对表征的处理方式。
