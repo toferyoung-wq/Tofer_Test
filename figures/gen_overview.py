@@ -150,8 +150,12 @@ for name, (x, w, y, h) in PANELS.items():
     body, head, stroke, op, formula = STYLE[name]
     v("", x, y, w, h, f"rounded=1;arcSize=3;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
     v("", x, y, w, 24, f"rounded=1;arcSize=12;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;")
-    v(op, x + 6, y + 3, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.6;fontSize=12;fontStyle=1;" + FONT)
-    text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", x + 30, y + 2, w - 34, 20, 14, DARK)
+    # centred header: [op] Name  formula  (text width estimated from character counts)
+    plain = {"Read": "project h·v", "Use": "mean-ablate v", "Write": "add ασFv"}[name]
+    tw = len(name) * 9 + 10 + len(plain) * 6.3
+    hx0 = x + (w - (18 + 6 + tw)) / 2
+    v(op, hx0, y + 3, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.6;fontSize=12;fontStyle=1;" + FONT)
+    text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", hx0 + 24, y + 2, tw + 20, 20, 14, DARK)
     if name != "Write":
         cx_ = x + w / 2
         v("", cx_ - 5, RL - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
