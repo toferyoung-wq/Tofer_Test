@@ -192,3 +192,7 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 
 - 门控改为图形表达：上行 FPpred 分数条（行首蓝色迷你方向块）+ 阈值线；只有超过阈值的位置有蓝色虚线箭头向下触发下行的橙色 ⊕（行首橙色迷你方向块），其余位置为灰点。
 - every position 行首放橙 + 蓝两个迷你方向块，表示两个方向都逐位置添加。标题缩为 "gated"。
+
+## 22. v18
+
+- Write 内部分成三个白底子面板（every position / gated / free generation），统一内边距、标题位置与列对齐；top k% 标签移到 gated 子面板右上角。

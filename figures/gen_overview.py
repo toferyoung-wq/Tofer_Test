@@ -190,32 +190,46 @@ def mini_cube(cx, cy, fill, stroke):
     return v("", cx, cy, 15, 14, f"shape=cube;size=4;html=1;fillColor={fill};strokeColor={stroke};strokeWidth=1.2;")
 
 
-X0 = x + 46                      # first position column
+# three sub-panels stacked inside Write
+SUB = "rounded=1;arcSize=6;html=1;fillColor=#FFFFFF;strokeColor=#D7B6E0;strokeWidth=1;"
+IX, IW = x + 10, w - 20
+B1, H1 = y + 32, 70
+B2, H2 = B1 + H1 + 8, 108
+B3, H3 = B2 + H2 + 8, h - (B2 + H2 + 8 - y) - 10
+for by, bh in ((B1, H1), (B2, H2), (B3, H3)):
+    v("", IX, by, IW, bh, SUB)
+
+
+def sub_title(t, by):
+    text(f"<i>{t}</i>", IX + 8, by + 3, 160, 14, 11, PURPLE)
+
+
+X0 = IX + 40                     # first position column
+XR = IX + IW - 12                # last x of the axis
+
 # every position: both directions added everywhere
-ty = y + 32
-text("<i>every position</i>", x + 12, ty, 160, 14, 11, PURPLE)
-mini_cube(x + 14, ty + 26, WARM_F, WARM_S)
-mini_cube(x + 14, ty + 44, COOL_F, COOL_S)
-base = ty + 62
+sub_title("every position", B1)
+mini_cube(IX + 12, B1 + 24, WARM_F, WARM_S)
+mini_cube(IX + 12, B1 + 42, COOL_F, COOL_S)
+base = B1 + 60
 n = 7
-ddx = (x + w - 18 - X0) / n
+ddx = (XR - X0) / n
 for i in range(n):
-    xx = X0 + i * ddx
+    xx = X0 + i * ddx + ddx / 2 - 6
     bar(xx, base, 10, GREY_BAR, w=11)
     text("⊕", xx - 3, base - 30, 17, 14, 12, PURPLE, "center", "fontStyle=1;")
-hline(X0 - 6, x + w - 14, base, AXIS)
+hline(X0, XR, base, AXIS)
 
 # gated: FPpred scores (top row) open the gate; FP is injected only there (bottom row)
-ty = y + 102
-text("<i>gated</i>", x + 12, ty, 160, 14, 11, PURPLE)
-b1, b2 = ty + 58, ty + 98
-mini_cube(x + 14, b1 - 16, COOL_F, COOL_S)
-mini_cube(x + 14, b2 - 14, WARM_F, WARM_S)
+sub_title("gated", B2)
+b1, b2 = B2 + 56, B2 + 96
+mini_cube(IX + 12, b1 - 16, COOL_F, COOL_S)
+mini_cube(IX + 12, b2 - 15, WARM_F, WARM_S)
 n = 9
-ddx = (x + w - 18 - X0) / n
+ddx = (XR - X0) / n
 sc = [8, 12, 30, 10, 7, 26, 9, 12, 8]
 for i in range(n):
-    xx = X0 + i * ddx
+    xx = X0 + i * ddx + ddx / 2 - 6
     over = sc[i] > 18
     bar(xx, b1, sc[i], COOL_S if over else GREY_BAR, w=11)
     if over:
@@ -224,23 +238,24 @@ for i in range(n):
         text("⊕", xx - 3, b2 - 16, 17, 16, 14, WARM_S, "center", "fontStyle=1;")
     else:
         v("", xx + 3, b2 - 10, 5, 5, "ellipse;html=1;fillColor=#CFD8DC;strokeColor=none;")
-hline(X0 - 6, x + w - 14, b1, AXIS)
-hline(X0 - 6, x + w - 14, b1 - 18, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
-text("top <i>k</i>%", x + w - 60, b1 - 34, 46, 12, 10, PURPLE, "right")
+hline(X0, XR, b1, AXIS)
+hline(X0, XR, b1 - 18, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
+text("top <i>k</i>%", XR - 46, B2 + 4, 46, 14, 10, PURPLE, "right")
 
-gy = y + 230
-text("<i>free generation</i>", x + 12, gy, 160, 14, 11, PURPLE)
-pc = v("prompt", x + 14, gy + 22, 60, 24,
+# free generation
+sub_title("free generation", B3)
+ry = B3 + (H3 - 24) / 2 + 6
+pc = v("prompt", IX + 10, ry, 60, 24,
        "rounded=1;arcSize=20;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#455A64;whiteSpace=wrap;" + FONT)
-gl = x + 92
+gl = IX + 88
 for i in range(3):
-    v("", gl, gy + 23 + i * 8, 24, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
-text("⊕", gl + 18, gy + 12, 16, 12, 11, PURPLE, "center", "fontStyle=1;")
-e(pc, None, FLOW, tp=(gl, gy + 34))
+    v("", gl, ry + 1 + i * 8, 24, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
+text("⊕", gl + 18, ry - 10, 16, 12, 11, PURPLE, "center", "fontStyle=1;")
+e(pc, None, FLOW, tp=(gl, ry + 12))
 oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is taking a cookie …",
-       gl + 42, gy + 22, x + w - 14 - (gl + 42), 24,
+       gl + 40, ry, XR - (gl + 40), 24,
        "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=11;fontColor=#263238;whiteSpace=wrap;" + FONT)
-e(None, oc, FLOW, sp=(gl + 26, gy + 34))
+e(None, oc, FLOW, sp=(gl + 26, ry + 12))
 
 xml = ('<mxfile host="drawio"><diagram id="overview" name="Overview">'
        f'<mxGraphModel dx="{W}" dy="{H}" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" '
