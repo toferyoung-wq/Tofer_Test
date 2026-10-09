@@ -201,3 +201,7 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 
 - 网络中第 21 层高亮改为中性深灰（FP 与 FPpred 共用），两个 − 号都从这一层引出箭头。
 - 自由生成：⊕ 放在模型示意图正上方；输出改为两个 [FP] 占位（"the boy [FP] is [FP] taking …"）。
+
+---
+
+**暂定稿：v19（commit 3dcc1df）。** 后续修改改 `figures/gen_overview.py` 后重新生成 `overview.drawio`。
