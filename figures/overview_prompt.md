@@ -196,3 +196,8 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 ## 22. v18
 
 - Write 内部分成三个白底子面板（every position / gated / free generation），统一内边距、标题位置与列对齐；top k% 标签移到 gated 子面板右上角。
+
+## 23. v19
+
+- 网络中第 21 层高亮改为中性深灰（FP 与 FPpred 共用），两个 − 号都从这一层引出箭头。
+- 自由生成：⊕ 放在模型示意图正上方；输出改为两个 [FP] 占位（"the boy [FP] is [FP] taking …"）。

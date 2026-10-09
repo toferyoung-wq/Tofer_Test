@@ -108,9 +108,9 @@ sx, sy, sw = 218, 18, 40
 for k, (ox_, oy_) in enumerate(((-12, -8), (-6, -4), (0, 0))):
     front = k == 2
     for i in range(9):
-        hl = i == 3
-        fill = ('#FFE0CC' if hl else '#ECEFF1') if front else ('#FFF1E8' if hl else '#F5F7F8')
-        stroke = ('#F08A4B' if hl else '#B0BEC5') if front else ('#F6C3A2' if hl else '#D5DCE0')
+        hl = i == 4
+        fill = ('#90A4AE' if hl else '#ECEFF1') if front else ('#CFD8DC' if hl else '#F5F7F8')
+        stroke = ('#546E7A' if hl else '#B0BEC5') if front else ('#B0BEC5' if hl else '#D5DCE0')
         v("", sx + ox_, sy + oy_ + i * 13, sw, 8,
           f"rounded=1;arcSize=30;html=1;strokeWidth=0.9;fillColor={fill};strokeColor={stroke};")
 for y in (FPY - 15, FPY + 9, PRY):
@@ -118,8 +118,9 @@ for y in (FPY - 15, FPY + 9, PRY):
 
 m1 = v("−", 170, FPY - 11, 22, 22, OPC)
 m2 = v("−", 170, PRY - 11, 22, 22, OPC)
-e(None, m1, FLOW, sp=(sx - 14, FPY))
-e(None, m2, FLOW, sp=(sx - 14, PRY))
+LAYER_Y = sy + 4 * 13 + 4
+e(None, m1, FLOW, sp=(sx - 14, LAYER_Y))
+e(None, m2, FLOW, sp=(sx - 14, LAYER_Y))
 c1 = v("", 110, FPY - 17, 36, 34, f"shape=cube;size=8;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.5;")
 c2 = v("", 110, PRY - 17, 36, 34, f"shape=cube;size=8;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.5;")
 e(m1, c1, FLOW)
@@ -250,9 +251,9 @@ pc = v("prompt", IX + 10, ry, 60, 24,
 gl = IX + 88
 for i in range(3):
     v("", gl, ry + 1 + i * 8, 24, 6, "rounded=1;arcSize=30;html=1;strokeWidth=0.8;fillColor=#ECEFF1;strokeColor=#B0BEC5;")
-text("⊕", gl + 18, ry - 10, 16, 12, 11, PURPLE, "center", "fontStyle=1;")
+text("⊕", gl + 4, ry - 15, 16, 14, 12, PURPLE, "center", "fontStyle=1;")
 e(pc, None, FLOW, tp=(gl, ry + 12))
-oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is taking a cookie …",
+oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> is <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&nbsp;</span> taking …",
        gl + 40, ry, XR - (gl + 40), 24,
        "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=11;fontColor=#263238;whiteSpace=wrap;" + FONT)
 e(None, oc, FLOW, sp=(gl + 26, ry + 12))
