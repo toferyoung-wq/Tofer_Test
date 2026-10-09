@@ -71,7 +71,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 408
+W, H = 920, 330
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -127,20 +127,20 @@ e(m2, c2, FLOW)
 text("<b>FP</b>", 98, FPY - 40, 60, 20, 15, WARM_S, "center")
 text("<b>FPpred</b>", 90, PRY - 40, 76, 20, 15, COOL_S, "center")
 
-text(f"two directions, both applied to the<br>residual stream {serif('h')} at block 21",
+text(f"both directions are applied to the<br>residual stream {serif('h')} at block 21",
      560, 52, 300, 34, 11.5, NOTE)
 
-# one line per direction, running left -> right above the stages
-RF, RP = 156, 174
-e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={WARM_S};strokeWidth=2.6;",
-  sp=(110, FPY), pts=[(16, FPY), (16, RF)], tp=(904, RF))
-e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={COOL_S};strokeWidth=2.6;",
-  sp=(110, PRY), pts=[(30, PRY), (30, RP)], tp=(904, RP))
-text(f"{serif('v')}<sub>FP</sub>", 868, RF - 18, 40, 16, 12, WARM_S, "right")
-text(f"{serif('v')}<sub>FPpred</sub>", 852, RP + 2, 56, 16, 12, COOL_S, "right")
+# both directions merge into one line that runs left -> right above the stages
+RL = 160
+LINE = "#546E7A"
+e(None, None, f"endArrow=none;strokeColor={WARM_S};strokeWidth=2.4;", sp=(110, FPY), pts=[(30, FPY)], tp=(30, PRY))
+e(None, None, f"endArrow=none;strokeColor={COOL_S};strokeWidth=2.4;", sp=(110, PRY), tp=(30, PRY))
+v("", 25, PRY - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
+e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL)], tp=(904, RL))
+text(f"{serif('v')} ∈ {{FP, FPpred}}", 760, RL - 20, 140, 16, 12, LINE, "right")
 
 # ======================= bottom: three stages =======================
-PY, PH = 200, 202
+PY, PH = 186, 138
 PANELS = {"Read": (8, 292), "Use": (308, 250), "Write": (566, 346)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
          "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
@@ -152,11 +152,8 @@ for name, (x, w) in PANELS.items():
     v(op, x + 6, PY + 3, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.6;fontSize=12;fontStyle=1;" + FONT)
     text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", x + 30, PY + 2, w - 34, 20, 14, DARK)
     cx_ = x + w / 2
-    fp_dash = "dashed=1;" if name == "Read" else ""
-    for colr, ry, dxo, extra in ((WARM_S, RF, -10, fp_dash), (COOL_S, RP, 10, "")):
-        v("", cx_ + dxo - 4, ry - 4, 8, 8, f"ellipse;html=1;fillColor={colr};strokeColor=none;")
-        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={colr};strokeWidth=1.8;{extra}",
-          sp=(cx_ + dxo, ry), tp=(cx_ + dxo, PY))
+    v("", cx_ - 5, RL - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
+    e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2;", sp=(cx_, RL), tp=(cx_, PY))
 
 # ---- Read: h·v_FPpred peaks before the FP; surprisal peaks on the word after it
 x, w = PANELS["Read"]
@@ -177,10 +174,6 @@ for i, wd in enumerate(words):
     text(wd, gx + i * dx - 4, b2 + 2, dx + 8, 14, 10.5, "#455A64", "center")
 text(f"{serif('h')}·{serif('v')}<sub>FPpred</sub>", x + 6, b1 - 16, 52, 14, 10.5, COOL_S)
 text("surprisal", x + 6, b2 - 16, 52, 14, 10, "#78909C")
-lx = x + 12
-row(lx, PY + 128, w - 16, "Position readout (AUC)", P)
-row(lx, PY + 150, w - 16, "Beyond covariates (ΔAUC)", P)
-row(lx, PY + 172, w - 16, "Surprisal link", P)
 
 # ---- Use: next-token distribution before (dashed) / after ablation (filled)
 x, w = PANELS["Use"]
@@ -196,10 +189,6 @@ for i in range(len(cands)):
     text(cands[i], xx - 12, base + 2, 40, 14, 10.5, "#455A64", "center")
 hline(gx - 8, gx + len(cands) * dx - 14, base, AXIS)
 text(f"dashed: before&nbsp; <span style='color:{WARM_S}'>■</span> after", x + 10, PY + 44, w - 14, 14, 10, NOTE)
-lx = x + 12
-row(lx, PY + 128, w - 16, "Ablate FP", R)
-row(lx, PY + 150, w - 16, "Ablate FPpred", R + P)
-text("<i>vs. matched random directions</i>", lx, PY + 174, w - 16, 14, 10, NOTE)
 
 # ---- Write: every vs selected positions, free generation, analyses
 x, w = PANELS["Write"]
@@ -241,13 +230,6 @@ oc = v("the boy <span style='background-color:#ECEFF1;color:#78909C'>&nbsp;[FP]&
        "rounded=1;arcSize=20;html=1;fillColor=#FFFFFF;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#263238;whiteSpace=wrap;" + FONT)
 e(None, oc, FLOW, sp=(gl + 24, gy + 15))
 
-cw = (w - 24) / 2
-lx = x + 12
-row(lx, PY + 136, cw, "Add FP", R + P, "TF · Gen", 11.5)
-row(lx, PY + 158, cw, "Add FPpred", R + P, "TF", 11.5)
-row(lx + cw, PY + 136, cw, "Oracle timing", R + P, "Gen", 11.5)
-row(lx + cw, PY + 158, cw, "Gated injection", R + P, "TF · Gen", 11.5)
-text("<i>gated: FPpred score chooses where FP is added</i>", lx, PY + 180, w - 20, 14, 10, NOTE)
 
 xml = ('<mxfile host="drawio"><diagram id="overview" name="Overview">'
        f'<mxGraphModel dx="{W}" dy="{H}" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" '
