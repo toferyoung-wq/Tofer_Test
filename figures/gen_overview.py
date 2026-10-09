@@ -186,29 +186,49 @@ hline(gx - 8, gx + len(cands) * dx - 14, base, AXIS)
 
 # ---- Write (tall): every position, selected positions, free generation
 x, w, y, h = PANELS["Write"]
-blocks = (("every position", y + 34), (f"gated by <b><font color='{COOL_S}'>FPpred</font></b> score", y + 122))
-for k, (title, ty) in enumerate(blocks):
-    text(f"<i>{title}</i>", x + 12, ty, 220, 14, 11, PURPLE)
-    base = ty + 66
-    n = 7 if k == 0 else 9
-    ddx = (w - 40) / n
-    sc = [8, 12, 30, 10, 7, 26, 9, 12, 8]
-    for i in range(n):
-        xx = x + 22 + i * ddx
-        if k == 0:
-            bar(xx, base, 10, GREY_BAR, w=11)
-            text("⊕", xx - 3, base - 30, 17, 14, 12, PURPLE, "center", "fontStyle=1;")
-        else:
-            over = sc[i] > 18
-            bar(xx, base, sc[i], COOL_S if over else GREY_BAR, w=11)
-            if over:
-                text("⊕", xx - 3, base - sc[i] - 17, 17, 14, 13, WARM_S, "center", "fontStyle=1;")
-    hline(x + 14, x + w - 14, base, AXIS)
-    if k == 1:
-        hline(x + 14, x + w - 14, base - 18, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
-        text("top <i>k</i>%", x + w - 60, base - 34, 46, 12, 10, PURPLE, "right")
+def mini_cube(cx, cy, fill, stroke):
+    return v("", cx, cy, 15, 14, f"shape=cube;size=4;html=1;fillColor={fill};strokeColor={stroke};strokeWidth=1.2;")
 
-gy = y + 226
+
+X0 = x + 46                      # first position column
+# every position: both directions added everywhere
+ty = y + 32
+text("<i>every position</i>", x + 12, ty, 160, 14, 11, PURPLE)
+mini_cube(x + 14, ty + 26, WARM_F, WARM_S)
+mini_cube(x + 14, ty + 44, COOL_F, COOL_S)
+base = ty + 62
+n = 7
+ddx = (x + w - 18 - X0) / n
+for i in range(n):
+    xx = X0 + i * ddx
+    bar(xx, base, 10, GREY_BAR, w=11)
+    text("⊕", xx - 3, base - 30, 17, 14, 12, PURPLE, "center", "fontStyle=1;")
+hline(X0 - 6, x + w - 14, base, AXIS)
+
+# gated: FPpred scores (top row) open the gate; FP is injected only there (bottom row)
+ty = y + 102
+text("<i>gated</i>", x + 12, ty, 160, 14, 11, PURPLE)
+b1, b2 = ty + 58, ty + 98
+mini_cube(x + 14, b1 - 16, COOL_F, COOL_S)
+mini_cube(x + 14, b2 - 14, WARM_F, WARM_S)
+n = 9
+ddx = (x + w - 18 - X0) / n
+sc = [8, 12, 30, 10, 7, 26, 9, 12, 8]
+for i in range(n):
+    xx = X0 + i * ddx
+    over = sc[i] > 18
+    bar(xx, b1, sc[i], COOL_S if over else GREY_BAR, w=11)
+    if over:
+        e(None, None, f"endArrow=blockThin;endFill=1;dashed=1;strokeColor={COOL_S};strokeWidth=1.6;",
+          sp=(xx + 5.5, b1 + 2), tp=(xx + 5.5, b2 - 16))
+        text("⊕", xx - 3, b2 - 16, 17, 16, 14, WARM_S, "center", "fontStyle=1;")
+    else:
+        v("", xx + 3, b2 - 10, 5, 5, "ellipse;html=1;fillColor=#CFD8DC;strokeColor=none;")
+hline(X0 - 6, x + w - 14, b1, AXIS)
+hline(X0 - 6, x + w - 14, b1 - 18, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")
+text("top <i>k</i>%", x + w - 60, b1 - 34, 46, 12, 10, PURPLE, "right")
+
+gy = y + 230
 text("<i>free generation</i>", x + 12, gy, 160, 14, 11, PURPLE)
 pc = v("prompt", x + 14, gy + 22, 60, 24,
        "rounded=1;arcSize=20;html=1;fillColor=#F5F5F5;strokeColor=#B0BEC5;fontSize=10.5;fontColor=#455A64;whiteSpace=wrap;" + FONT)
