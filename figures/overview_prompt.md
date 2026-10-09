@@ -39,11 +39,9 @@
 | 方向 | 颜色 | 旁注 |
 |---|---|---|
 | FP | 暖色 | disfluent − fluent |
-| PSEUDO | 灰 | optional-word pairs (*well, so*) |
-| FP⊥ | 暖色虚线描边 | FP − PSEUDO component |
 | FPpred | 冷色 | pre-FP − pre-ordinary positions |
 
-- 例句对只画 FP 的构造；PSEUDO、FPpred 只用旁注说明，不另画句子。
+- 例句对只画 FP 的构造；FPpred 只用旁注说明，不另画句子。
 
 ### ② Activation space（中列，参考图的"嵌入空间"）
 
@@ -70,8 +68,8 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 | Read | Use | Write |
 |---|---|---|
 | Position readout ●P | Ablate FP ●R | Add FP `TF` `Gen` ●R●P |
-| Beyond covariates ●P | FP⊥ specificity ●R | Add FPpred `TF` ●R●P |
-| Surprisal link ●P | Ablate FPpred ●R●P | Oracle timing `Gen` ●R●P |
+| Beyond covariates ●P | Ablate FPpred ●R●P | Add FPpred `TF` ●R●P |
+| Surprisal link ●P | | Oracle timing `Gen` ●R●P |
 | | | Gated by FPpred `TF` `Gen` ●R●P |
 
 ### ④ Rate vs. Placement（底部条，横跨 Use + Write）
@@ -103,3 +101,4 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 4. 实验列表只保留主线短名；对照仅保留"FP vs. matched ordinary sites"（④）和一个统一的随机控制标记（②）。
 5. ② 中 v_FP 与 v_FPpred 画成正交，标 `schematic`。
 6. 例句自拟。
+7. 图中只保留 FP 与 FPpred 两个方向；PSEUDO / FP⊥ 及其特异性检验移到图注和正文。

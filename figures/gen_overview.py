@@ -92,17 +92,15 @@ e(None, minus, FLOW, sp=(stack_x + 19, stack_y + 68))
 text(f"{serif('h')}<sub>disfl</sub> − {serif('h')}<sub>fluent</sub>", 96, 106, 76, 14, 10, "#546E7A", "right")
 
 dirs = [
-    ("FP", WARM_F, WARM_S, "", "disfluent − fluent"),
-    ("PSEUDO", "#EEEEEE", "#9E9E9E", "", "optional-word pairs (<i>well, so</i>)"),
-    ("FP<sub>⊥</sub>", WARM_F, WARM_S, "dashed=1;", "FP − PSEUDO component"),
-    ("FPpred", COOL_F, COOL_S, "", "pre-FP − pre-ordinary positions"),
+    ("FP", WARM_F, WARM_S, "disfluent − fluent utterances"),
+    ("FPpred", COOL_F, COOL_S, "pre-FP − pre-ordinary positions"),
 ]
 cubes = []
-for i, (name, f, s, ex, note) in enumerate(dirs):
-    y = 132 + i * 30
-    cubes.append(v("", 14, y, 22, 20, f"shape=cube;size=5;html=1;fillColor={f};strokeColor={s};{ex}"))
-    text(f"<b>{name}</b>&nbsp; <font color='#607D8B' style='font-size:9.5px'>{note}</font>", 42, y, 200, 20, 11)
-e(minus, None, FLOW + "exitX=0.5;exitY=1;", tp=(25, 130), pts=[(stack_x + 19, 124), (25, 124)])
+for i, (name, f, s, note) in enumerate(dirs):
+    y = 140 + i * 52
+    cubes.append(v("", 12, y, 30, 27, f"shape=cube;size=6;html=1;fillColor={f};strokeColor={s};"))
+    text(f"<b>{name}</b><br><font color='#607D8B' style='font-size:10.5px'>{note}</font>", 50, y - 4, 200, 36, 13)
+e(minus, None, FLOW + "exitX=0.5;exitY=1;", tp=(27, 136), pts=[(stack_x + 19, 128), (27, 128)])
 text("Llama-3.2-3B<br>Qwen2.5-1.5B / -7B", 8, 84, 90, 26, 9.5, "#78909C")
 
 # ---------- B. Activation space ----------
@@ -157,7 +155,7 @@ def items(x, y0, w, rows, dy=19, size=10.5):
 rx, rw = colpos["Read"]
 items(rx + 6, 104, rw - 8, [f"Position readout {P}", f"Beyond covariates {P}", f"Surprisal link {P}"])
 ux, uw = colpos["Use"]
-items(ux + 6, 104, uw - 8, [f"Ablate FP {R}", f"FP<sub>⊥</sub> specificity {R}", f"Ablate FPpred {R}{P}"])
+items(ux + 6, 104, uw - 8, [f"Ablate FP {R}", f"Ablate FPpred {R}{P}"])
 
 wx, ww = colpos["Write"]
 # sub-boxes
