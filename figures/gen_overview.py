@@ -186,9 +186,9 @@ hline(gx - 8, gx + len(cands) * dx - 14, base, AXIS)
 
 # ---- Write (tall): every position, selected positions, free generation
 x, w, y, h = PANELS["Write"]
-blocks = (("every position", y + 34), ("selected positions", y + 122))
+blocks = (("every position", y + 34), (f"gated by <b><font color='{COOL_S}'>FPpred</font></b> score", y + 122))
 for k, (title, ty) in enumerate(blocks):
-    text(f"<i>{title}</i>", x + 12, ty, 160, 14, 11, PURPLE)
+    text(f"<i>{title}</i>", x + 12, ty, 220, 14, 11, PURPLE)
     base = ty + 66
     n = 7 if k == 0 else 9
     ddx = (w - 40) / n
@@ -202,7 +202,7 @@ for k, (title, ty) in enumerate(blocks):
             over = sc[i] > 18
             bar(xx, base, sc[i], COOL_S if over else GREY_BAR, w=11)
             if over:
-                text("⊕", xx - 3, base - sc[i] - 17, 17, 14, 12, PURPLE, "center", "fontStyle=1;")
+                text("⊕", xx - 3, base - sc[i] - 17, 17, 14, 13, WARM_S, "center", "fontStyle=1;")
     hline(x + 14, x + w - 14, base, AXIS)
     if k == 1:
         hline(x + 14, x + w - 14, base - 18, "dashed=1;strokeColor=#7B1FA2;strokeWidth=1;")

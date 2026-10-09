@@ -183,3 +183,7 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - Read 只保留 h·v 一排；Use 只保留消融前后分布图，去掉标题与图例文字；删除右上注释。
 - Write 面板改为右侧整高，向上延伸占据右上空白；方向线从左往右，接 Read、Use 后直接进入 Write 左侧。
 - Write 内上下三块：every position / selected positions (top k%) / free generation。
+
+## 20. v16
+
+- Write 门控块标题改为 "gated by FPpred score"（FPpred 蓝色），门控位置的 ⊕ 改为 FP 橙色：FPpred 选位置，FP 负责注入。
