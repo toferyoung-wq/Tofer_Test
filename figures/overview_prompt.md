@@ -1,7 +1,6 @@
 # Overview figure — drawing prompt (draft v1)
 
 > 用 `paper-flowchart` skill 执行。内容以《读、用、写：实验重新编号与数据总表》（2026-10-09）为准，不以旧版 main.tex 为准。
-> 【待定】标记的项是默认选择，可改。
 
 ## 1. 目的与版式
 
@@ -37,28 +36,28 @@ Inputs → Directions 一条实线；Directions 到三个面板各一条实线�
 
 ### C. 三个并列面板
 
-每个面板顶部一行写操作公式，下面竖排实验条目。条目格式：`短名` + 右侧 Rate/Placement 色点 + 【待定】灰色小号 E 编号。Q7 未覆盖的条目尾部加灰色小字 `3B/1.5B`。
+每个面板顶部一行写操作公式，下面竖排实验条目。条目格式：`短名` + 右侧 Rate/Placement 色点（不显示 E 编号）。Q7 未覆盖的条目尾部加灰色小字 `3B/1.5B`。
 
 **READ**（冰蓝底）— 操作：`project h·v`
-- Surprisal vs. filler propensity — ● P — E1 — `3B/1.5B`
-- Position readout (AUC) — ● P — E2
-- Incremental prediction over covariates (ΔAUC) — ● P — E3
+- Surprisal vs. filler propensity — ● P — `3B/1.5B`
+- Position readout (AUC) — ● P
+- Incremental prediction over covariates (ΔAUC) — ● P
 
 **USE**（薄荷底）— 操作：`mean-ablate ⊖  h − (h·v − μ)v`
-- FP ablation vs. energy-matched controls — ● R — E4
-- PSEUDO / FP⊥ specificity — ● R — E5
-- FPpred ablation — ● R ● P — E6
+- FP ablation vs. energy-matched controls — ● R
+- PSEUDO / FP⊥ specificity — ● R
+- FPpred ablation — ● R ● P
 
 **WRITE**（淡紫底）— 操作：`add ⊕  h + ασ_F v`
 分两个子组（细虚线小容器）：
 - *Ungated*
-  - FP addition: gain vs. timing (TF) — ● R ● P — E7
-  - Continuous FP injection (generation) — ● R ● P — E8 — `3B/1.5B`
-  - FPpred addition (TF) — ● R ● P — E9
-  - Oracle-timed injection — ● R ● P — E10 — `3B/1.5B`
+  - FP addition: gain vs. timing (TF) — ● R ● P
+  - Continuous FP injection (generation) — ● R ● P — `3B/1.5B`
+  - FPpred addition (TF) — ● R ● P
+  - Oracle-timed injection — ● R ● P — `3B/1.5B`
 - *Gated*（内含一个菱形：`FPpred score in top k%?`，是 → `inject FP +8σ_F`；对照 `own / random / always`）
-  - Gated teacher forcing — ● P — E11
-  - Gated generation — ● R ● P — E12 — `3B/1.5B`
+  - Gated teacher forcing — ● P
+  - Gated generation — ● R ● P — `3B/1.5B`
 
 ### D. Evaluation 条（底部，横跨 USE 与 WRITE 面板下方）
 
@@ -74,7 +73,7 @@ Inputs → Directions 一条实线；Directions 到三个面板各一条实线�
 ## 4. 配色
 
 - 面板底色按 `paper-flowchart` 规范：READ 冰蓝 `#E6F3FF`、USE 薄荷 `#E0F2F1`、WRITE 淡紫 `#F3E5F5`。
-- **Rate = 琥珀 `#E69F00`，Placement = 青绿 `#009E73`**【待定】—— 全图仅这两处实色，用于色点、g/f 和 Evaluation 两格边框。
+- **Rate = 琥珀 `#E69F00`，Placement = 青绿 `#009E73`**—— 全图仅这两处实色，用于色点、g/f 和 Evaluation 两格边框。
 - 无高饱和红色（不展示结果）。
 
 ## 5. 不画的内容
@@ -83,8 +82,8 @@ Inputs → Directions 一条实线；Directions 到三个面板各一条实线�
 - REP / REPpred 及 S-REP、W-S1、S0、S-ROB 等补充项。
 - 剂量网格细节、解码参数、预算数值（仅在 Gated 菱形中写 `top k%`）。
 
-## 6. 【待定】项
+## 6. 已定事项
 
-1. 是否以本图取代现有 Figure 1（g·f 概念图已压缩进 Evaluation 条）。默认：取代。
-2. 是否显示 E1–E12 编号。默认：灰色小号显示，易于删除。
-3. Rate / Placement 颜色。默认：琥珀 / 青绿（色盲友好的 Okabe–Ito 配色）。
+1. 本图取代现有 Figure 1（g·f 概念图压缩进 Evaluation 条）。
+2. 不显示 E1–E12 编号。
+3. Rate / Placement = 琥珀 / 青绿（Okabe–Ito）。
