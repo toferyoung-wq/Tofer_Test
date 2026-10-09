@@ -71,7 +71,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 342
+W, H = 920, 328
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -137,10 +137,10 @@ WX = 562
 e(None, None, f"endArrow=none;strokeColor={WARM_S};strokeWidth=2.4;", sp=(110, FPY), pts=[(30, FPY)], tp=(30, PRY))
 e(None, None, f"endArrow=none;strokeColor={COOL_S};strokeWidth=2.4;", sp=(110, PRY), tp=(30, PRY))
 v("", 25, PRY - 5, 10, 10, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
-e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL)], tp=(WX, RL))
+e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={LINE};strokeWidth=2.8;", sp=(30, PRY), pts=[(30, RL), (WX - 18, RL), (WX - 18, 18)], tp=(WX + 16, 18))
 
 # ======================= stages =======================
-PY, PH = 206, 128
+PY, PH = 192, 128
 WY, WH = 18, PY + PH - 18
 PANELS = {"Read": (8, 266, PY, PH), "Use": (282, 266, PY, PH), "Write": (WX, 912 - WX, WY, WH)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
@@ -149,26 +149,24 @@ STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v'
 for name, (x, w, y, h) in PANELS.items():
     body, head, stroke, op, formula = STYLE[name]
     v("", x, y, w, h, f"rounded=1;arcSize=3;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
-    # small title tab straddling the frame's top-left corner
-    tw = len(name) * 9 + 22
-    v(f"<b>{name}</b>", x + 12, y - 11, tw, 22,
-      f"rounded=1;arcSize=30;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;fontSize=13;fontColor={DARK};" + FONT)
-    # operation pill sits on the connector that brings the direction into the stage
+    # the stage name is a pill on the frame border; the incoming connector ends on it
     sym = {"Read": "⊙", "Use": "⊖", "Write": "⊕"}[name]
-    plain = {"Read": "project h·v", "Use": "mean-ablate v", "Write": "add ασFv"}[name]
-    pw, ph = 26 + len(plain) * 6.4, 22
-    pill = (f"rounded=1;arcSize=50;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;"
-            f"fontSize=11.5;fontColor={DARK};spacingLeft=2;spacingRight=2;" + FONT)
-    label = f"<b style='font-size:14px'>{sym}</b>&nbsp;{formula}"
+    pw, ph = len(name) * 9 + 46, 26
+    pill = (f"rounded=1;arcSize=50;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.4;"
+            f"fontSize=13.5;fontColor={DARK};" + FONT)
+    label = f"<span style='font-size:16px'>{sym}</span>&nbsp;<b>{name}</b>"
+    sub = f"<i><font color='{NOTE}'>{formula}</font></i>"
     if name != "Write":
         cx_ = x + w / 2
-        oy = (RL + y) / 2
         v("", cx_ - 4, RL - 4, 8, 8, f"ellipse;html=1;fillColor={LINE};strokeColor=none;")
-        e(None, None, f"endArrow=none;strokeColor={LINE};strokeWidth=1.8;", sp=(cx_, RL), tp=(cx_, oy))
-        e(None, None, f"endArrow=blockThin;endFill=1;endSize=5;strokeColor={LINE};strokeWidth=1.8;", sp=(cx_, oy), tp=(cx_, y))
-        v(label, cx_ - pw / 2, oy - ph / 2, pw, ph, pill)
+        e(None, None, f"endArrow=blockThin;endFill=1;endSize=5;strokeColor={LINE};strokeWidth=1.8;",
+          sp=(cx_, RL), tp=(cx_, y - ph / 2))
+        v(label, cx_ - pw / 2, y - ph / 2, pw, ph, pill)
+        text(sub, cx_ - 90, y + ph / 2 + 2, 180, 16, 11, DARK, "center")
     else:
-        v(label, WX - pw - 26, RL - ph / 2, pw, ph, pill)
+        px = x + 16
+        v(label, px, y - ph / 2, pw, ph, pill)
+        text(sub, px + pw + 10, y + 2, 140, 16, 11, DARK, "left")
 
 # ---- Read: h·v peaks just before the FP
 x, w, y, h = PANELS["Read"]
@@ -183,7 +181,6 @@ for i in range(len(words)):
 hline(gx, gx + len(words) * dx, base, AXIS)
 for i, wd in enumerate(words):
     text(wd, gx + i * dx - 4, base + 2, dx + 8, 14, 10.5, "#455A64", "center")
-text(f"{serif('h·v')}", x + 8, y + 32, 30, 14, 11, COOL_S)
 
 # ---- Use: next-token distribution before (dashed) / after ablation (filled)
 x, w, y, h = PANELS["Use"]
