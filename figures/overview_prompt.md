@@ -165,3 +165,9 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - FP 与 FPpred 两条线在汇合点合并，单支箭头落到残差流上，旁注 "both directions: v ∈ {FP, FPpred}, applied to the residual stream at block 21"。
 - 残差流改为无方向的横条，避免落点位置暗示某个阶段先用或不用。
 - 每个面板：上方分布示意图，下方分析条目；Write 内含 every / selected positions 两个小图与 Gen 条。
+
+## 17. v13
+
+- 构建部分水平镜像：例句在右 → 三层网络 → − → FP / FPpred 方向块在最左。
+- 每个方向一条线（v_FP 橙、v_FPpred 蓝），从左往右横贯三个阶段上方；不画成两条残差流（模型只有一条残差流），右上注明 "two directions, both applied to the residual stream h at block 21"。
+- 每个阶段从两条线各引一个接头；Read 的 FP 接头为虚线（仅作对照）。操作符号 · ⊖ ⊕ 移入面板表头。

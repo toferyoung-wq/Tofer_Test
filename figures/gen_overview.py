@@ -71,7 +71,7 @@ def tab(label, x, y, w):
 
 
 
-W, H = 920, 398
+W, H = 920, 408
 DARK = "#37474F"
 NOTE = "#607D8B"
 GREY_BAR = "#CFD8DC"
@@ -93,56 +93,54 @@ def row(x, y, w, label, dots="", tags="", size=12):
     return text(s_, x, y, w, 18, size, DARK)
 
 
-# ======================= top: direction construction =======================
+# ======================= top: direction construction (mirrored: right -> left) =======================
 uh = f'<span style="background-color:{FPHL}">&nbsp;uh&nbsp;</span>'
 pre = f'<span style="background-color:{COOL_F};border-bottom:2px solid {COOL_S}">&nbsp;is&nbsp;</span>'
-FPY, PRY = 44, 112
-s1 = text(f"the boy is {uh} taking a cookie", 8, FPY - 26, 200, 22, 14)
-s2 = text("the boy is taking a cookie", 8, FPY - 2, 200, 22, 14)
-text("disfluent − fluent pairs", 8, FPY + 20, 200, 16, 11.5, NOTE)
-s3 = text(f"the boy {pre} uh taking a cookie", 8, PRY - 11, 200, 22, 14)
-text("pre-FP − pre-ordinary positions", 8, PRY + 13, 200, 16, 11.5, NOTE)
+FPY, PRY = 46, 112
+TX = 300                                  # sentences on the right
+s1 = text(f"the boy is {uh} taking a cookie", TX, FPY - 26, 210, 22, 14)
+s2 = text("the boy is taking a cookie", TX, FPY - 2, 210, 22, 14)
+text("disfluent − fluent pairs", TX, FPY + 20, 210, 16, 11.5, NOTE)
+s3 = text(f"the boy {pre} uh taking a cookie", TX, PRY - 11, 210, 22, 14)
+text("pre-FP − pre-ordinary positions", TX, PRY + 13, 210, 16, 11.5, NOTE)
 
-sx, sy, sw = 222, 14, 40
-for k, (ox_, oy_) in enumerate(((12, -8), (6, -4), (0, 0))):
+sx, sy, sw = 218, 18, 40
+for k, (ox_, oy_) in enumerate(((-12, -8), (-6, -4), (0, 0))):
     front = k == 2
     for i in range(9):
         hl = i == 3
         fill = ('#FFE0CC' if hl else '#ECEFF1') if front else ('#FFF1E8' if hl else '#F5F7F8')
         stroke = ('#F08A4B' if hl else '#B0BEC5') if front else ('#F6C3A2' if hl else '#D5DCE0')
-        v("", sx + ox_, sy + oy_ + i * 14, sw, 9,
+        v("", sx + ox_, sy + oy_ + i * 13, sw, 8,
           f"rounded=1;arcSize=30;html=1;strokeWidth=0.9;fillColor={fill};strokeColor={stroke};")
-for s_, y in ((s1, FPY - 15), (s2, FPY + 9), (s3, PRY)):
-    e(s_, None, FLOW, tp=(sx, y))
+for y in (FPY - 15, FPY + 9, PRY):
+    e(None, None, FLOW, sp=(TX - 4, y), tp=(sx + sw, y))
 
-m1 = v("−", 282, FPY - 11, 22, 22, OPC)
-m2 = v("−", 282, PRY - 11, 22, 22, OPC)
-e(None, m1, FLOW, sp=(sx + sw + 12, FPY))
-e(None, m2, FLOW, sp=(sx + sw + 12, PRY))
-c1 = v("", 318, FPY - 17, 36, 34, f"shape=cube;size=8;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.5;")
-c2 = v("", 318, PRY - 17, 36, 34, f"shape=cube;size=8;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.5;")
+m1 = v("−", 170, FPY - 11, 22, 22, OPC)
+m2 = v("−", 170, PRY - 11, 22, 22, OPC)
+e(None, m1, FLOW, sp=(sx - 14, FPY))
+e(None, m2, FLOW, sp=(sx - 14, PRY))
+c1 = v("", 110, FPY - 17, 36, 34, f"shape=cube;size=8;html=1;fillColor={WARM_F};strokeColor={WARM_S};strokeWidth=1.5;")
+c2 = v("", 110, PRY - 17, 36, 34, f"shape=cube;size=8;html=1;fillColor={COOL_F};strokeColor={COOL_S};strokeWidth=1.5;")
 e(m1, c1, FLOW)
 e(m2, c2, FLOW)
-text("<b>FP</b>", 362, FPY - 10, 40, 20, 15, WARM_S)
-text("<b>FPpred</b>", 362, PRY - 10, 70, 20, 15, COOL_S)
+text("<b>FP</b>", 98, FPY - 40, 60, 20, 15, WARM_S, "center")
+text("<b>FPpred</b>", 90, PRY - 40, 76, 20, 15, COOL_S, "center")
 
-# merge both directions, then onto the residual stream (no flow direction implied)
-JX, MY = 470, (FPY + PRY) / 2
-LAND = 470
-e(None, None, f"endArrow=none;strokeColor={WARM_S};strokeWidth=2.2;", sp=(436, FPY), pts=[(JX, FPY)], tp=(JX, MY))
-e(None, None, f"endArrow=none;strokeColor={COOL_S};strokeWidth=2.2;", sp=(436, PRY), pts=[(JX, PRY)], tp=(JX, MY))
-v("", JX - 5, MY - 5, 10, 10, "ellipse;html=1;fillColor=#78909C;strokeColor=none;")
-STREAM_Y = 170
-e(None, None, "endArrow=blockThin;endFill=1;strokeColor=#78909C;strokeWidth=2.4;", sp=(JX, MY), tp=(LAND, STREAM_Y - 4))
-text(f"both directions: {serif('v')} ∈ {{FP, FPpred}}<br><font color='{NOTE}'>applied to the residual stream at block 21</font>",
-     JX + 14, MY - 10, 300, 32, 11.5, DARK)
+text(f"two directions, both applied to the<br>residual stream {serif('h')} at block 21",
+     560, 52, 300, 34, 11.5, NOTE)
 
-# residual stream (a shared bar; every stage hooks onto it)
-v("", 8, STREAM_Y - 3, 904, 6, "rounded=1;arcSize=50;html=1;fillColor=#B0BEC5;strokeColor=none;")
-text(f"residual stream {serif('h')}", 792, STREAM_Y - 20, 120, 14, 10.5, NOTE, "right")
+# one line per direction, running left -> right above the stages
+RF, RP = 156, 174
+e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={WARM_S};strokeWidth=2.6;",
+  sp=(110, FPY), pts=[(16, FPY), (16, RF)], tp=(904, RF))
+e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={COOL_S};strokeWidth=2.6;",
+  sp=(110, PRY), pts=[(30, PRY), (30, RP)], tp=(904, RP))
+text(f"{serif('v')}<sub>FP</sub>", 868, RF - 18, 40, 16, 12, WARM_S, "right")
+text(f"{serif('v')}<sub>FPpred</sub>", 852, RP + 2, 56, 16, 12, COOL_S, "right")
 
 # ======================= bottom: three stages =======================
-PY, PH = 188, 202
+PY, PH = 200, 202
 PANELS = {"Read": (8, 292), "Use": (308, 250), "Write": (566, 346)}
 STYLE = {"Read": ("#F2F8FE", "#CFE6FB", "#7FB0DD", "·", f"project {serif('h·v')}"),
          "Use": ("#F1F9F8", "#CDEBE7", "#6FBFB4", "⊖", f"mean-ablate {serif('v')}"),
@@ -151,11 +149,14 @@ for name, (x, w) in PANELS.items():
     body, head, stroke, op, formula = STYLE[name]
     v("", x, PY, w, PH, f"rounded=1;arcSize=3;html=1;fillColor={body};strokeColor={stroke};strokeWidth=1.2;")
     v("", x, PY, w, 24, f"rounded=1;arcSize=12;html=1;fillColor={head};strokeColor={stroke};strokeWidth=1.2;")
-    text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", x + 10, PY + 2, w - 14, 20, 14, DARK)
-    hx = x + w / 2
-    hook = v(op, hx - 11, STREAM_Y - 11, 22, 22,
-             f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=2;fontSize=13;fontStyle=1;" + FONT)
-    e(hook, None, f"endArrow=blockThin;endFill=1;strokeColor={stroke};strokeWidth=1.6;", tp=(hx, PY))
+    v(op, x + 6, PY + 3, 18, 18, f"ellipse;html=1;fillColor=#FFFFFF;strokeColor={stroke};strokeWidth=1.6;fontSize=12;fontStyle=1;" + FONT)
+    text(f"<b>{name}</b>&nbsp;&nbsp;<font style='font-size:11.5px'>{formula}</font>", x + 30, PY + 2, w - 34, 20, 14, DARK)
+    cx_ = x + w / 2
+    fp_dash = "dashed=1;" if name == "Read" else ""
+    for colr, ry, dxo, extra in ((WARM_S, RF, -10, fp_dash), (COOL_S, RP, 10, "")):
+        v("", cx_ + dxo - 4, ry - 4, 8, 8, f"ellipse;html=1;fillColor={colr};strokeColor=none;")
+        e(None, None, f"endArrow=blockThin;endFill=1;strokeColor={colr};strokeWidth=1.8;{extra}",
+          sp=(cx_ + dxo, ry), tp=(cx_ + dxo, PY))
 
 # ---- Read: h·v_FPpred peaks before the FP; surprisal peaks on the word after it
 x, w = PANELS["Read"]
