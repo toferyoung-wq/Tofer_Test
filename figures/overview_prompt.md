@@ -102,3 +102,11 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 5. ② 中 v_FP 与 v_FPpred 画成正交，标 `schematic`。
 6. 例句自拟。
 7. 图中只保留 FP 与 FPpred 两个方向；PSEUDO / FP⊥ 及其特异性检验移到图注和正文。
+
+## 7. v3 布局修订（2026-10-09）
+
+- 改为上下两行：(a) Direction construction 在上，(b) Interventions on the residual stream 在下，中间一支粗箭头 `apply v at block 21` 表明两部分关系。
+- 删除 Rate vs. Placement 概念演示（词串 + 概率条与 g·f 公式）；Rate / Placement 只以色点和右上角图例 `Scored for` 体现。
+- FPpred 也画出构造方式（`the boy [is] uh …`，pre-FP vs. pre-ordinary positions），与 FP 共用同一 LM 层叠块。
+- 门控虚线从 v_FPpred 出发，沿 (a) 行下方走到 Write 栏的门控分数条。
+- 当前布局以 `figures/gen_overview.py` 为准。
