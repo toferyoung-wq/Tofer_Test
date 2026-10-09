@@ -86,7 +86,6 @@ def hline(x0, x1, y, style):
 
 
 # ======================= (a) Directions (compact) =======================
-tab("(a) Directions", 8, 4, 120)
 uh = f'<span style="background-color:{FPHL}">&nbsp;uh&nbsp;</span>'
 s1 = text(f"the boy is {uh} taking a cookie", 8, 30, 176, 18, 12)
 s2 = text("the boy is taking a cookie", 8, 50, 176, 18, 12)
@@ -113,21 +112,12 @@ e(m2, c2, FLOW)
 text(f"<b>FP</b> <font style='font-size:10.5px' color='{NOTE}'>disfluent − fluent</font>", 340, 34, 150, 27, 13.5, WARM_S)
 text(f"<b>FPpred</b> <font style='font-size:10.5px' color='{NOTE}'>pre-FP − pre-ordinary</font>", 340, 79, 170, 27, 13.5, COOL_S)
 
-# key
-v("", 560, 22, 352, 54, "rounded=1;arcSize=8;html=1;fillColor=#FFFFFF;strokeColor=#CFD8DC;")
-text(f"{R} <b>rate</b> <font color='{NOTE}'>how many fillers</font>&nbsp;&nbsp;&nbsp;{P} <b>placement</b> <font color='{NOTE}'>where they occur</font>",
-     570, 26, 340, 22, 11.5, DARK)
-text(f"<font color='#78909C'><b>TF</b></font> <font color='{NOTE}'>teacher forcing on human transcripts</font>&nbsp;&nbsp;&nbsp;"
-     f"<font color='#78909C'><b>Gen</b></font> <font color='{NOTE}'>free generation</font>",
-     570, 48, 340, 22, 11, DARK)
-
 # (a) -> (b)
 e(None, None, "shape=flexArrow;endArrow=classic;html=1;fillColor=#ECEFF1;strokeColor=#B0BEC5;width=9;endSize=5;endWidth=10;",
   sp=(319, 110), tp=(319, 152))
 text(f"apply {serif('v')} at block 21", 332, 120, 150, 16, 11, NOTE)
 
 # ======================= (b) Read / Use / Write =======================
-tab("(b) Read · Use · Write", 8, 126, 170)
 stream_y = 162
 e(None, None, "endArrow=blockThin;endFill=1;strokeColor=#90A4AE;strokeWidth=2.4;", sp=(8, stream_y), tp=(912, stream_y))
 text(f"residual stream {serif('h')}", 800, stream_y - 18, 112, 14, 10.5, NOTE, "right")

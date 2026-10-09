@@ -116,3 +116,7 @@ Write 栏挂钩前放门控菱形 `FPpred high?`，接收来自 ② 的 `externa
 - 删除残差空间示意与 Data/Models 信息框；(a) 压缩为一行窄带，重点放在 (b) 三个阶段。
 - 每个阶段加机制小图：Read = 各位置 h·v 分数条（pre-FP 位置突出）；Use = 下一词分布，消融前虚框 / 后实心（"does P(uh) drop?"）；Write = 两个子面板，Ungated 每个位置都 ⊕，Externally timed 只在超过 top k% 阈值的位置 ⊕。
 - 阶段框加深色表头条；右上角图例同时解释 rate/placement 色点与 TF/Gen 标签。
+
+## 9. v5 修订
+
+- 删除右上角图例框和 (a)/(b) 分区标签；rate/placement 色点与 TF/Gen 标签的含义改由图注说明。
